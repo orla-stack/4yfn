@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4YFN 2026 — Startup Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Rubik:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #ff6131;
+    --purple: #6300ff;
+    --lime: #97f505;
+    --cyan: #00b5ec;
+    --dark: #0a0a0f;
+    --dark2: #12121a;
+    --dark3: #1a1a26;
+    --dark4: #24243a;
+    --white: #ffffff;
+    --gray: #8888aa;
+    --light-gray: #c0c0d0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, var(--dark) 0%, #1a0a30 50%, var(--dark) 100%);
+    border-bottom: 1px solid var(--dark4);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+
+  .header-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .header-logos {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .header-logos img { height: 30px; }
+  .header-logos .logo-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--dark4);
+  }
+
+  .header-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--gray);
+    letter-spacing: 0.05em;
+  }
+
+  .header-title span { color: var(--orange); }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    padding: 4rem 2rem 3rem;
+    text-align: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 0%, rgba(99,0,255,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, rgba(255,97,49,0.1) 0%, transparent 50%);
+  }
+
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 .gradient-text {
+    background: linear-gradient(135deg, var(--orange) 0%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--gray);
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.6;
+  }
+
+  .hero-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--dark3);
+    border: 1px solid var(--dark4);
+    border-radius: 100px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    color: var(--light-gray);
+    margin-bottom: 1.5rem;
+  }
+
+  .venue-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+    padding: 0.55rem 1.3rem;
+    border-radius: 100px;
+    border: 1px solid var(--dark4);
+    background: var(--dark3);
+    color: var(--light-gray);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.25s;
+  }
+
+  .venue-link:hover {
+    border-color: var(--orange);
+    color: var(--white);
+    background: rgba(255,97,49,0.1);
+  }
+
+  .venue-link svg { flex-shrink: 0; color: var(--orange); }
+
+  .hero-date .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--lime);
+    border-radius: 50%;
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── Stats Bar ── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 0 2rem 2rem;
+  }
+
+  .stat-card {
+    background: var(--dark2);
+    border: 1px solid var(--dark4);
+    border-radius: 16px;
+    padding: 1.2rem 1.8rem;
+    text-align: center;
+    min-width: 140px;
+    transition: border-color 0.3s;
+  }
+
+  .stat-card:hover { border-color: var(--purple); }
+
+  .stat-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--orange);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.25rem;
+  }
+
+  /* ── Main Content ── */
+  .main {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  /* ── Filters ── */
+  .filters-section {
+    margin-bottom: 2rem;
+  }
+
+  .filters-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    background: var(--dark2);
+    border: 1px solid var(--dark4);
+    border-radius: 12px;
+    color: var(--white);
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .search-box input:focus { border-color: var(--purple); }
+  .search-box input::placeholder { color: var(--gray); }
+
+  .search-box svg {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--gray);
+  }
+
+  .result-count {
+    font-size: 0.85rem;
+    color: var(--gray);
+  }
+
+  .result-count span { color: var(--orange); font-weight: 600; }
+
+  .filter-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    padding: 0.35rem 0.8rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--dark4);
+    background: var(--dark2);
+    color: var(--light-gray);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .chip:hover { border-color: var(--purple); color: var(--white); }
+  .chip.active {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: var(--white);
+  }
+
+  .chip-count {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin-left: 0.25rem;
+  }
+
+  .clear-filters {
+    padding: 0.35rem 0.8rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    border: 1px solid var(--orange);
+    background: transparent;
+    color: var(--orange);
+    font-family: 'Rubik', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .clear-filters:hover { background: var(--orange); color: var(--white); }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    background: var(--dark2);
+    border: 1px solid var(--dark4);
+    border-radius: 16px;
+    padding: 1.4rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--orange), var(--purple));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover {
+    border-color: var(--purple);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(99, 0, 255, 0.15);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .card-round {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    white-space: nowrap;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+
+  .round-seed { background: rgba(151,245,5,0.15); color: var(--lime); }
+  .round-early { background: rgba(0,181,236,0.15); color: var(--cyan); }
+  .round-series-a { background: rgba(255,97,49,0.15); color: var(--orange); }
+  .round-series-b { background: rgba(99,0,255,0.15); color: #a06aff; }
+  .round-series-c { background: rgba(255,97,49,0.2); color: #ff8866; }
+  .round-late { background: rgba(255,200,50,0.15); color: #ffc832; }
+  .round-ipo { background: rgba(151,245,5,0.2); color: #b0ff40; }
+  .round-other { background: rgba(136,136,170,0.15); color: var(--gray); }
+
+  .card-tagline {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--gray);
+  }
+
+  .meta-item svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+
+  .meta-item .meta-value { color: var(--light-gray); }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .card-tag {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    background: var(--dark4);
+    color: var(--gray);
+  }
+
+  .card-links {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--dark4);
+  }
+
+  .card-link {
+    font-size: 0.75rem;
+    color: var(--cyan);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.2s;
+  }
+
+  .card-link:hover { color: var(--orange); }
+  .card-link svg { width: 12px; height: 12px; }
+
+  /* ── Floorplan Section ── */
+  .section-heading {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 3rem 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-heading .accent-bar {
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(180deg, var(--orange), var(--purple));
+    border-radius: 2px;
+  }
+
+  .floorplan-container {
+    background: var(--dark2);
+    border: 1px solid var(--dark4);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .floorplan-container img {
+    width: 100%;
+    display: block;
+  }
+
+  .floorplan-caption {
+    padding: 1rem 1.4rem;
+    font-size: 0.85rem;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .floorplan-caption svg { width: 16px; height: 16px; color: var(--orange); flex-shrink: 0; }
+
+  /* ── Loading ── */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    gap: 1rem;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--dark4);
+    border-top-color: var(--orange);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text { color: var(--gray); font-size: 0.9rem; }
+
+  /* ── No Results ── */
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--gray);
+  }
+
+  .no-results svg { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.4; }
+
+  /* ── Pagination ── */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  .page-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--dark4);
+    background: var(--dark2);
+    color: var(--light-gray);
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .page-btn:hover { border-color: var(--purple); }
+  .page-btn.active { background: var(--purple); border-color: var(--purple); color: var(--white); }
+  .page-btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--dark4);
+    color: var(--gray);
+    font-size: 0.8rem;
+  }
+
+  .footer a { color: var(--cyan); text-decoration: none; }
+  .footer a:hover { color: var(--orange); }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .header-inner { flex-wrap: wrap; }
+    .stats-bar { gap: 0.75rem; }
+    .stat-card { min-width: 100px; padding: 1rem; }
+    .stat-value { font-size: 1.4rem; }
+    .grid { grid-template-columns: 1fr; }
+    .filter-row { flex-direction: column; align-items: flex-start; }
+    .filter-label { min-width: auto; }
+  }
+
+  /* ── Sort Control ── */
+  .sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sort-select {
+    padding: 0.5rem 0.8rem;
+    background: var(--dark2);
+    border: 1px solid var(--dark4);
+    border-radius: 10px;
+    color: var(--light-gray);
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .sort-select:focus { border-color: var(--purple); }
+
+  /* ── Scroll to top ── */
+  .scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--purple);
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(99,0,255,0.4);
+    transition: transform 0.2s;
+    z-index: 50;
+  }
+
+  .scroll-top:hover { transform: scale(1.1); }
+  .scroll-top.visible { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logos">
+      <img src="https://event-assets.gsma.com/4YFN/logos/4YFN_Logo_LockUp_Dated_WHT_RGB.png" alt="4YFN 2026" />
+      <div class="logo-divider"></div>
+      <span style="font-size: 0.7rem; color: var(--gray); letter-spacing: 0.04em;">Powered by</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" style="height: 22px;" aria-label="Dealroom"><defs><style>.cls-1{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M201.48,27.53a2.47,2.47,0,0,1,1.22.29,2.25,2.25,0,0,1,.87.75l2.8-2.94A5.37,5.37,0,0,0,204,24.2a8.89,8.89,0,0,0-2.56-.4,8.6,8.6,0,0,0-3,.5,7.15,7.15,0,0,0-2.44,1.46A6.79,6.79,0,0,0,194.44,28a7.63,7.63,0,0,0,0,5.93,6.89,6.89,0,0,0,1.62,2.27,7.31,7.31,0,0,0,2.44,1.46,8.6,8.6,0,0,0,3,.5,8.26,8.26,0,0,0,2.56-.41,5.35,5.35,0,0,0,2.33-1.42l-2.8-2.94a3.63,3.63,0,0,1-.87.74,2.26,2.26,0,0,1-1.22.3,3.22,3.22,0,0,1-2.5-1,3.53,3.53,0,0,1-.89-2.51,3.52,3.52,0,0,1,.89-2.5A3.22,3.22,0,0,1,201.48,27.53Z"/><path class="cls-1" d="M158.18,25.76a7.15,7.15,0,0,0-2.44-1.46,8.6,8.6,0,0,0-3-.5,8.69,8.69,0,0,0-3,.5,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,145.71,28a7.63,7.63,0,0,0,0,5.93,6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46h0a8.69,8.69,0,0,0,3,.5,8.6,8.6,0,0,0,3-.5,7.31,7.31,0,0,0,2.44-1.46A6.92,6.92,0,0,0,159.81,34a7.63,7.63,0,0,0,0-5.93A6.82,6.82,0,0,0,158.18,25.76Zm-2.91,7.75a3.76,3.76,0,0,1-5,0,3.56,3.56,0,0,1-.89-2.51,3.53,3.53,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0,3.53,3.53,0,0,1,.89,2.51A3.56,3.56,0,0,1,155.27,33.51Z"/><path class="cls-1" d="M141.46,25.76A7.31,7.31,0,0,0,139,24.3a9.16,9.16,0,0,0-6,0,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,129,28,7.75,7.75,0,0,0,129,34a6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46h0a9.16,9.16,0,0,0,6,0,7.31,7.31,0,0,0,2.44-1.46A7.07,7.07,0,0,0,143.09,34a7.75,7.75,0,0,0,0-5.93A7,7,0,0,0,141.46,25.76Zm-2.91,7.75a3.76,3.76,0,0,1-5,0,3.56,3.56,0,0,1-.89-2.51,3.48,3.48,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0,3.53,3.53,0,0,1,.89,2.51A3.56,3.56,0,0,1,138.55,33.51Z"/><path class="cls-1" d="M74.14,25.61h0a4,4,0,0,0-1.88-1.41,7.49,7.49,0,0,0-2.48-.4,5.58,5.58,0,0,0-2.63.6,6.19,6.19,0,0,0-2,1.63,7.32,7.32,0,0,0-1.24,2.32,8.9,8.9,0,0,0-.44,2.76A8.17,8.17,0,0,0,63.93,34,6.63,6.63,0,0,0,65.3,36.2a6.07,6.07,0,0,0,2.14,1.47h0a7.11,7.11,0,0,0,2.77.53,5,5,0,0,0,1.38-.2,6.46,6.46,0,0,0,1.21-.51,5.56,5.56,0,0,0,1-.7,4.66,4.66,0,0,0,.66-.74h0v1.81h3.9V16.51H74.14Zm-.56,7.89a3.74,3.74,0,0,1-5,0A3.53,3.53,0,0,1,67.69,31a3.56,3.56,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0A3.56,3.56,0,0,1,74.47,31,3.53,3.53,0,0,1,73.58,33.5Z"/><path class="cls-1" d="M221.55,28a6.82,6.82,0,0,0-1.63-2.27,7.31,7.31,0,0,0-2.44-1.46,8.6,8.6,0,0,0-3-.5,8.69,8.69,0,0,0-3,.5,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,207.45,28a7.75,7.75,0,0,0,0,5.93,6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46,8.69,8.69,0,0,0,3,.5,8.6,8.6,0,0,0,3-.5,7.31,7.31,0,0,0,2.44-1.46A6.92,6.92,0,0,0,221.55,34a7.63,7.63,0,0,0,0-5.93ZM217,33.51a3.76,3.76,0,0,1-5,0A3.56,3.56,0,0,1,211.1,31a3.53,3.53,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0A3.54,3.54,0,0,1,217.9,31,3.56,3.56,0,0,1,217,33.51Z"/><path class="cls-1" d="M93.17,25.76a5.56,5.56,0,0,0-2-1.45,6.66,6.66,0,0,0-2.68-.51,8.46,8.46,0,0,0-3,.51A7,7,0,0,0,83,25.76,6.78,6.78,0,0,0,81.41,28a7.75,7.75,0,0,0,0,5.93A6.78,6.78,0,0,0,83,36.23a7,7,0,0,0,2.43,1.46h0a8.58,8.58,0,0,0,3,.5,7.71,7.71,0,0,0,3.23-.71,6.7,6.7,0,0,0,2.57-2l-3-2.17A4.8,4.8,0,0,1,90,34.51a3.05,3.05,0,0,1-1.77.46,3.12,3.12,0,0,1-2.09-.71,3.32,3.32,0,0,1-1.1-1.94h9.85V31a9.08,9.08,0,0,0-.46-3A6.63,6.63,0,0,0,93.17,25.76Zm-8.11,3.68a2.66,2.66,0,0,1,.24-1,2.42,2.42,0,0,1,.6-.82,3,3,0,0,1,.91-.58h0a3.24,3.24,0,0,1,1.23-.23,2.51,2.51,0,0,1,1.9.77,2.45,2.45,0,0,1,.71,1.83Z"/><path class="cls-1" d="M108.19,25.64a4.47,4.47,0,0,0-1.92-1.37,8.68,8.68,0,0,0-3.07-.47,9.87,9.87,0,0,0-3.28.56A7.65,7.65,0,0,0,97.15,26l2.26,2.31a5.29,5.29,0,0,1,1.54-1.2,4.35,4.35,0,0,1,1.91-.44,2.91,2.91,0,0,1,1.91.67,2.23,2.23,0,0,1,.81,1.79l-1.91,0a20.62,20.62,0,0,0-2.07.17,13.6,13.6,0,0,0-2,.44,6,6,0,0,0-1.71.84A3.87,3.87,0,0,0,96.71,32a4.21,4.21,0,0,0-.44,2,4.15,4.15,0,0,0,.4,1.84,3.83,3.83,0,0,0,1.08,1.32,4.41,4.41,0,0,0,1.57.8h0a6.09,6.09,0,0,0,1.84.28,6.37,6.37,0,0,0,2.48-.48,4,4,0,0,0,1.88-1.58h.06v1.72h3.9v-7a14.61,14.61,0,0,0-.29-3A5.21,5.21,0,0,0,108.19,25.64Zm-2.61,7.1a2.23,2.23,0,0,1-1,1.92,3.45,3.45,0,0,1-1,.48,4.1,4.1,0,0,1-1.2.17A2.69,2.69,0,0,1,101,35a1.21,1.21,0,0,1-.65-1.13,1.35,1.35,0,0,1,.47-1.1,3,3,0,0,1,1.13-.6,6.43,6.43,0,0,1,1.38-.24h0c.49,0,.89,0,1.2,0h1Z"/><path class="cls-1" d="M191,33.58a2.6,2.6,0,0,0-.84-.55,2.73,2.73,0,0,0-1-.2,2.76,2.76,0,0,0-1,.2,2.5,2.5,0,0,0-1.38,1.38,2.54,2.54,0,0,0-.2,1,2.58,2.58,0,0,0,.2,1,2.41,2.41,0,0,0,.55.83,2.56,2.56,0,0,0,.83.55h0a2.67,2.67,0,0,0,1,.2,2.73,2.73,0,0,0,1-.2,2.6,2.6,0,0,0,.84-.55,2.73,2.73,0,0,0,.55-.83,2.76,2.76,0,0,0,.2-1,2.62,2.62,0,0,0-.75-1.85Z"/><rect class="cls-1" x="111.67" y="16.51" width="4.24" height="21.35"/><path class="cls-1" d="M182.91,25.54a3.7,3.7,0,0,0-1.5-1.27,5.34,5.34,0,0,0-2.33-.47,5.42,5.42,0,0,0-2.57.56,4.53,4.53,0,0,0-1.78,1.9,3.78,3.78,0,0,0-1.68-1.87,5.46,5.46,0,0,0-2.56-.59,4.87,4.87,0,0,0-1.42.2,5.18,5.18,0,0,0-1.16.51,3.71,3.71,0,0,0-.87.71,3.18,3.18,0,0,0-.57.79h-.06V24.14h-4.07V37.86h4.24V31a9.36,9.36,0,0,1,.09-1.3,3.4,3.4,0,0,1,.35-1.12,2,2,0,0,1,.78-.79,2.67,2.67,0,0,1,1.33-.29,1.67,1.67,0,0,1,1.12.33,2.05,2.05,0,0,1,.55.82,3.92,3.92,0,0,1,.2,1c0,.36,0,.66,0,.9v7.26h4.25V30.6a5.28,5.28,0,0,1,.12-1.19,2.77,2.77,0,0,1,.43-1,2,2,0,0,1,.79-.67,2.75,2.75,0,0,1,1.23-.23,1.56,1.56,0,0,1,1.46.68,3.32,3.32,0,0,1,.41,1.66v8h4.23v-8.1a10.65,10.65,0,0,0-.23-2.33A5.37,5.37,0,0,0,182.91,25.54Z"/><path class="cls-1" d="M126.69,23.79a4.07,4.07,0,0,0-2.35.64,5.21,5.21,0,0,0-1.62,1.9h0v-2.2h-4.24V37.86h4.24V32.12a12.9,12.9,0,0,1,.11-1.86,3.58,3.58,0,0,1,.5-1.45,2.48,2.48,0,0,1,1.08-.95,4.55,4.55,0,0,1,1.93-.34,5.62,5.62,0,0,1,.92.07,6.77,6.77,0,0,1,.89.21V23.94a3.87,3.87,0,0,0-.68-.12Z"/><path class="cls-1" d="M32.75,20.12H31v13h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72A4.66,4.66,0,0,0,32.75,20.12Z"/><path class="cls-1" d="M51.89,0H1.5A1.5,1.5,0,0,0,0,1.5V51.77a1.51,1.51,0,0,0,1.51,1.51H51.88a1.52,1.52,0,0,0,1.51-1.51V1.5A1.5,1.5,0,0,0,51.89,0ZM15.36,38.2H9.15V27.55h6.21Zm7.81,0H17v-17h6.21Zm18-3.14q-3.18,3.13-9,3.14H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23C44.32,30,43.26,33,41.13,35.06Z"/></g></g></svg>
+    </div>
+    <div class="header-title">STARTUP EXPLORER &mdash; <span>Infinite AI</span></div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-date">
+    <span class="dot"></span>
+    3 &ndash; 6 March 2026 &middot; Fira Gran Via, Barcelona
+  </div>
+  <h1>Discover <span class="gradient-text">716 Startups</span><br>Shaping the Future</h1>
+  <p>Explore the full lineup of companies attending 4YFN 2026. Filter by industry, funding stage, and more to find the innovators that matter to you.</p>
+  <a href="#floorplan" class="venue-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    View Venue Map
+  </a>
+</section>
+
+<!-- Stats -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-card"><div class="stat-value" id="statCompanies">—</div><div class="stat-label">Startups</div></div>
+  <div class="stat-card"><div class="stat-value" id="statFunding">—</div><div class="stat-label">Funding</div></div>
+  <div class="stat-card"><div class="stat-value" id="statUnicorns">—</div><div class="stat-label">Unicorns</div></div>
+  <div class="stat-card"><div class="stat-value" id="statEmployees">—</div><div class="stat-label">Employees</div></div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filters-header">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search startups by name, tagline, or city..." />
+      </div>
+      <div class="sort-controls">
+        <select class="sort-select" id="sortSelect">
+          <option value="name">Sort: A-Z</option>
+          <option value="name-desc">Sort: Z-A</option>
+          <option value="funding-desc">Funding: High → Low</option>
+          <option value="funding-asc">Funding: Low → High</option>
+          <option value="employees-desc">Team size: Large → Small</option>
+          <option value="newest">Newest first</option>
+        </select>
+      </div>
+      <div class="result-count">Showing <span id="resultCount">0</span> startups</div>
+    </div>
+
+    <div class="filter-rows">
+      <div class="filter-row">
+        <span class="filter-label">Theme</span>
+        <div class="filter-chips" id="industryFilters"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Stage</span>
+        <div class="filter-chips" id="stageFilters"></div>
+        <button class="clear-filters" id="clearFilters" style="display:none;">Clear all</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div id="grid" class="grid">
+    <div class="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading startup data...</div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" id="pagination"></div>
+
+  <!-- Floorplan -->
+  <h2 id="floorplan" class="section-heading" style="scroll-margin-top: 80px;">
+    <span class="accent-bar"></span>
+    Venue Floorplan
+  </h2>
+  <div class="floorplan-container">
+    <img src="https://event-assets.gsma.com/4YFN/Images/4YFN26_Floorplan.webp" alt="4YFN 2026 Floorplan — Fira Gran Via, Hall 8" />
+    <div class="floorplan-caption">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      4YFN Entrance: Fira Gran Via, Hall 8 (North) &mdash; Barcelona
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  Data powered by <a href="https://dealroom.co" target="_blank" rel="noopener">Dealroom</a> &middot;
+  <a href="https://www.4yfn.com/" target="_blank" rel="noopener">4yfn.com</a> &middot;
+  3 &ndash; 6 March 2026, Barcelona
+</footer>
+
+<!-- Scroll to top -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>
+</button>
+
+<script>
+const SHEET_ID = '1kNGDPIvgT14IyYNnMlIBP8ZvnQJeM_6vJccPMGZd9P8';
+const PER_PAGE = 24;
+
+let allData = [];
+let filtered = [];
+let currentPage = 1;
+let activeIndustry = null;
+let activeStage = null;
+
+// ── Funding stage grouping ──
+const STAGE_GROUPS = {
+  'Pre-Seed / Angel': ['ANGEL', 'SUPPORT PROGRAM', 'GRANT'],
+  'Seed': ['SEED'],
+  'Early (Series A)': ['SERIES A', 'EARLY VC'],
+  'Growth (B-C)': ['SERIES B', 'SERIES C'],
+  'Late / Other': ['LATE VC', 'GROWTH EQUITY VC', 'GROWTH EQUITY NON VC', 'IPO', 'POST IPO EQUITY', 'POST IPO CONVERTIBLE', 'PRIVATE PLACEMENT VC', 'DEBT', 'SECONDARY', 'ACQUISITION', 'BUYOUT', 'SPINOUT']
+};
+
+function getStageGroup(round) {
+  if (!round) return null;
+  for (const [group, stages] of Object.entries(STAGE_GROUPS)) {
+    if (stages.includes(round)) return group;
+  }
+  return null;
+}
+
+function getRoundClass(round) {
+  if (!round) return 'round-other';
+  const r = round.toUpperCase();
+  if (r === 'SEED' || r === 'ANGEL') return 'round-seed';
+  if (r.includes('EARLY') || r === 'SUPPORT PROGRAM' || r === 'GRANT') return 'round-early';
+  if (r === 'SERIES A') return 'round-series-a';
+  if (r === 'SERIES B') return 'round-series-b';
+  if (r === 'SERIES C') return 'round-series-c';
+  if (r.includes('LATE') || r.includes('GROWTH')) return 'round-late';
+  if (r.includes('IPO')) return 'round-ipo';
+  return 'round-other';
+}
+
+function formatFunding(val) {
+  const n = parseFloat(val);
+  if (!n || isNaN(n)) return null;
+  if (n >= 1000) return `$${(n / 1000).toFixed(1)}B`;
+  if (n >= 1) return `$${n.toFixed(1)}M`;
+  return `$${(n * 1000).toFixed(0)}K`;
+}
+
+function formatBigNumber(n) {
+  if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
+  if (n >= 1e6) return `$${(n / 1e6).toFixed(0)}M`;
+  if (n >= 1e3) return `$${(n / 1e3).toFixed(0)}K`;
+  return `$${n.toLocaleString()}`;
+}
+
+function formatEmployees(val) {
+  const n = parseInt(val);
+  if (!n || isNaN(n)) return null;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return String(n);
+}
+
+// ── Country to flag emoji ──
+const COUNTRY_FLAGS = {
+  'Afghanistan':'🇦🇫','Albania':'🇦🇱','Algeria':'🇩🇿','Andorra':'🇦🇩','Angola':'🇦🇴','Argentina':'🇦🇷','Armenia':'🇦🇲','Australia':'🇦🇺','Austria':'🇦🇹','Azerbaijan':'🇦🇿',
+  'Bahamas':'🇧🇸','Bahrain':'🇧🇭','Bangladesh':'🇧🇩','Barbados':'🇧🇧','Belarus':'🇧🇾','Belgium':'🇧🇪','Belize':'🇧🇿','Benin':'🇧🇯','Bhutan':'🇧🇹','Bolivia':'🇧🇴',
+  'Bosnia and Herzegovina':'🇧🇦','Botswana':'🇧🇼','Brazil':'🇧🇷','Brunei':'🇧🇳','Bulgaria':'🇧🇬','Burkina Faso':'🇧🇫','Burundi':'🇧🇮','Cambodia':'🇰🇭','Cameroon':'🇨🇲',
+  'Canada':'🇨🇦','Cape Verde':'🇨🇻','Central African Republic':'🇨🇫','Chad':'🇹🇩','Chile':'🇨🇱','China':'🇨🇳','Colombia':'🇨🇴','Comoros':'🇰🇲','Congo':'🇨🇬',
+  'Costa Rica':'🇨🇷','Croatia':'🇭🇷','Cuba':'🇨🇺','Cyprus':'🇨🇾','Czech Republic':'🇨🇿','Czechia':'🇨🇿','Denmark':'🇩🇰','Djibouti':'🇩🇯','Dominican Republic':'🇩🇴',
+  'DR Congo':'🇨🇩','East Timor':'🇹🇱','Ecuador':'🇪🇨','Egypt':'🇪🇬','El Salvador':'🇸🇻','Equatorial Guinea':'🇬🇶','Eritrea':'🇪🇷','Estonia':'🇪🇪','Eswatini':'🇸🇿',
+  'Ethiopia':'🇪🇹','Fiji':'🇫🇯','Finland':'🇫🇮','France':'🇫🇷','Gabon':'🇬🇦','Gambia':'🇬🇲','Georgia':'🇬🇪','Germany':'🇩🇪','Ghana':'🇬🇭','Greece':'🇬🇷',
+  'Grenada':'🇬🇩','Guatemala':'🇬🇹','Guinea':'🇬🇳','Guyana':'🇬🇾','Haiti':'🇭🇹','Honduras':'🇭🇳','Hong Kong':'🇭🇰','Hungary':'🇭🇺','Iceland':'🇮🇸','India':'🇮🇳',
+  'Indonesia':'🇮🇩','Iran':'🇮🇷','Iraq':'🇮🇶','Ireland':'🇮🇪','Israel':'🇮🇱','Italy':'🇮🇹','Ivory Coast':'🇨🇮',"Côte d'Ivoire":'🇨🇮','Jamaica':'🇯🇲','Japan':'🇯🇵',
+  'Jordan':'🇯🇴','Kazakhstan':'🇰🇿','Kenya':'🇰🇪','Kiribati':'🇰🇮','Kosovo':'🇽🇰','Kuwait':'🇰🇼','Kyrgyzstan':'🇰🇬','Laos':'🇱🇦','Latvia':'🇱🇻','Lebanon':'🇱🇧',
+  'Lesotho':'🇱🇸','Liberia':'🇱🇷','Libya':'🇱🇾','Liechtenstein':'🇱🇮','Lithuania':'🇱🇹','Luxembourg':'🇱🇺','Madagascar':'🇲🇬','Malawi':'🇲🇼','Malaysia':'🇲🇾',
+  'Maldives':'🇲🇻','Mali':'🇲🇱','Malta':'🇲🇹','Mauritania':'🇲🇷','Mauritius':'🇲🇺','Mexico':'🇲🇽','Moldova':'🇲🇩','Monaco':'🇲🇨','Mongolia':'🇲🇳','Montenegro':'🇲🇪',
+  'Morocco':'🇲🇦','Mozambique':'🇲🇿','Myanmar':'🇲🇲','Namibia':'🇳🇦','Nepal':'🇳🇵','Netherlands':'🇳🇱','New Zealand':'🇳🇿','Nicaragua':'🇳🇮','Niger':'🇳🇪',
+  'Nigeria':'🇳🇬','North Korea':'🇰🇵','North Macedonia':'🇲🇰','Norway':'🇳🇴','Oman':'🇴🇲','Pakistan':'🇵🇰','Palestine':'🇵🇸','Panama':'🇵🇦','Papua New Guinea':'🇵🇬',
+  'Paraguay':'🇵🇾','Peru':'🇵🇪','Philippines':'🇵🇭','Poland':'🇵🇱','Portugal':'🇵🇹','Qatar':'🇶🇦','Romania':'🇷🇴','Russia':'🇷🇺','Rwanda':'🇷🇼',
+  'Saudi Arabia':'🇸🇦','Senegal':'🇸🇳','Serbia':'🇷🇸','Seychelles':'🇸🇨','Sierra Leone':'🇸🇱','Singapore':'🇸🇬','Slovakia':'🇸🇰','Slovenia':'🇸🇮','Somalia':'🇸🇴',
+  'South Africa':'🇿🇦','South Korea':'🇰🇷','South Sudan':'🇸🇸','Spain':'🇪🇸','Sri Lanka':'🇱🇰','Sudan':'🇸🇩','Suriname':'🇸🇷','Sweden':'🇸🇪','Switzerland':'🇨🇭',
+  'Syria':'🇸🇾','Taiwan':'🇹🇼','Tajikistan':'🇹🇯','Tanzania':'🇹🇿','Thailand':'🇹🇭','Togo':'🇹🇬','Tonga':'🇹🇴','Trinidad and Tobago':'🇹🇹','Tunisia':'🇹🇳',
+  'Turkey':'🇹🇷','Turkmenistan':'🇹🇲','Uganda':'🇺🇬','Ukraine':'🇺🇦','United Arab Emirates':'🇦🇪','UAE':'🇦🇪','United Kingdom':'🇬🇧','UK':'🇬🇧',
+  'United States':'🇺🇸','USA':'🇺🇸','US':'🇺🇸','Uruguay':'🇺🇾','Uzbekistan':'🇺🇿','Venezuela':'🇻🇪','Vietnam':'🇻🇳','Yemen':'🇾🇪','Zambia':'🇿🇲','Zimbabwe':'🇿🇼'
+};
+
+function countryFlag(country) {
+  if (!country || country === 'N/A') return '';
+  return COUNTRY_FLAGS[country] || '🌍';
+}
+
+function displayRound(round) {
+  if (!round) return null;
+  const map = {
+    'EARLY VC': 'Early VC', 'LATE VC': 'Late VC',
+    'SERIES A': 'Series A', 'SERIES B': 'Series B', 'SERIES C': 'Series C',
+    'SEED': 'Seed', 'ANGEL': 'Angel', 'GRANT': 'Grant', 'DEBT': 'Debt',
+    'IPO': 'IPO', 'SECONDARY': 'Secondary', 'ACQUISITION': 'Acquired',
+    'BUYOUT': 'Buyout', 'SPINOUT': 'Spinout',
+    'GROWTH EQUITY VC': 'Growth', 'GROWTH EQUITY NON VC': 'Growth',
+    'POST IPO EQUITY': 'Post-IPO', 'POST IPO CONVERTIBLE': 'Post-IPO',
+    'PRIVATE PLACEMENT VC': 'Private', 'SUPPORT PROGRAM': 'Accelerator'
+  };
+  return map[round] || round;
+}
+
+// ── Fetch Data (JSONP to avoid CORS issues with file:// and cross-origin) ──
+function loadData() {
+  return new Promise((resolve, reject) => {
+    // Define the callback that Google's JSONP response will invoke
+    window.google = window.google || {};
+    window.google.visualization = window.google.visualization || {};
+    window.google.visualization.Query = window.google.visualization.Query || {};
+    window.google.visualization.Query.setResponse = function(json) {
+      try {
+        const cols = json.table.cols.map(c => c.label);
+        allData = json.table.rows.map(row => {
+          const obj = {};
+          cols.forEach((col, i) => {
+            const cell = row.c[i];
+            obj[col] = cell ? (cell.v != null ? String(cell.v) : '') : '';
+          });
+          return obj;
+        });
+        computeStats();
+        buildFilters();
+        applyFilters();
+        resolve();
+      } catch (e) {
+        reject(e);
+      }
+    };
+
+    // Load via script tag (JSONP) — works from file:// and any origin
+    const script = document.createElement('script');
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    script.onerror = () => reject(new Error('Failed to load data from Google Sheets. Check that the sheet is publicly accessible.'));
+    document.head.appendChild(script);
+  });
+}
+
+// ── Stats ──
+function computeStats() {
+  const industries = new Set();
+  const cities = new Set();
+  let funding = 0;
+  let employees = 0;
+  let unicorns = 0;
+
+  allData.forEach(d => {
+    if (d['Industries']) d['Industries'].split(';').forEach(i => industries.add(i.trim()));
+    if (d['HQ city']) cities.add(d['HQ city']);
+    funding += parseFloat(d['Total funding (USD M)']) || 0;
+    employees += parseInt(d['Employees latest number']) || 0;
+    if (d['Year company became unicorn']) unicorns++;
+  });
+
+  document.getElementById('statCompanies').textContent = allData.length;
+  document.getElementById('statFunding').textContent = `$${Math.round(funding / 1000)}B`;
+  document.getElementById('statUnicorns').textContent = unicorns;
+  document.getElementById('statEmployees').textContent = employees >= 1000 ? `${(employees / 1000).toFixed(0)}k+` : employees;
+}
+
+// ── Theme categories (curated for 4YFN 2026) ──
+const THEME_CATEGORIES = {
+  'AI': {
+    industries: ['enterprise software'],
+    subIndustries: ['artificial intelligence', 'machine learning', 'natural language processing', 'computer vision', 'generative ai'],
+    technologies: ['machine learning', 'artificial intelligence', 'natural language processing', 'computer vision', 'deep learning', 'generative ai'],
+    tags: ['core ai', 'ai', 'generative ai', 'mlops', 'artificial intelligence'],
+    tagline: ['\\bai\\b', 'artificial intelligence', 'machine learning', 'deep learning', 'llm', 'generative']
+  },
+  'Climate Tech': {
+    industries: ['energy', 'transportation'],
+    subIndustries: ['clean energy', 'renewable energy', 'solar', 'wind', 'carbon', 'sustainability', 'cleantech', 'climate', 'electric vehicle', 'ev charging', 'waste', 'circular economy', 'green'],
+    technologies: [],
+    tags: ['climate', 'cleantech', 'sustainability', 'carbon', 'renewable', 'clean energy', 'green', 'circular economy'],
+    tagline: ['climate', 'sustainab', 'carbon', 'renewable', 'clean energy', 'green energy', 'circular economy', 'decarboni', 'emission']
+  },
+  'Creativity': {
+    industries: ['media', 'music', 'gaming'],
+    subIndustries: ['content creation', 'video', 'streaming', 'animation', 'design', 'creative', 'publishing', 'digital media', 'podcasting', 'augmented reality', 'virtual reality'],
+    technologies: ['augmented reality', 'virtual reality'],
+    tags: ['creator economy', 'content', 'creative', 'metaverse', 'xr', 'ar/vr'],
+    tagline: ['creative', 'creator', 'content creat', 'design', 'video', 'music', 'art', 'media', 'storytell', 'animation']
+  },
+  'Cybersecurity': {
+    industries: ['security'],
+    subIndustries: ['cybersecurity', 'data privacy', 'identity', 'authentication', 'encryption', 'fraud', 'threat detection'],
+    technologies: ['cybersecurity', 'blockchain'],
+    tags: ['cybersecurity', 'data privacy', 'identity', 'fraud', 'zero trust'],
+    tagline: ['security', 'cyber', 'privacy', 'encrypt', 'authenticat', 'fraud', 'threat', 'identity verif']
+  },
+  'Fintech': {
+    industries: ['fintech'],
+    subIndustries: ['payments', 'banking', 'insurance', 'lending', 'wealth management', 'financial management solutions', 'regtech', 'cryptocurrency', 'defi'],
+    technologies: ['blockchain'],
+    tags: ['fintech', 'payments', 'banking', 'insurtech', 'regtech', 'defi', 'crypto'],
+    tagline: ['fintech', 'payment', 'banking', 'financ', 'insuran', 'lending', 'wealth', 'invest']
+  },
+  'Gaming': {
+    industries: ['gaming'],
+    subIndustries: ['esports', 'game development', 'game engine', 'interactive entertainment', 'virtual worlds'],
+    technologies: ['gaming', 'unity', 'unreal'],
+    tags: ['gaming', 'esports', 'game', 'metaverse'],
+    tagline: ['gaming', 'game', 'esport', 'player', 'interactive entertain']
+  },
+  'Healthtech': {
+    industries: ['health'],
+    subIndustries: ['medical devices', 'digital health', 'telemedicine', 'biotech', 'diagnostics', 'mental health', 'patient care', 'drug discovery', 'clinical trials', 'health platform', 'genomics', 'pharmaceutical'],
+    technologies: [],
+    tags: ['health', 'medtech', 'biotech', 'digital health', 'patient care', 'telemedicine', 'mental health'],
+    tagline: ['health', 'medical', 'patient', 'clinical', 'diagnos', 'therap', 'pharma', 'biotech', 'telemedicine', 'mental health', 'wellness']
+  },
+  'Spinouts': {
+    industries: [],
+    subIndustries: [],
+    technologies: [],
+    tags: [],
+    tagline: [],
+    roundMatch: ['SPINOUT']
+  }
+};
+
+function matchesTheme(d, theme) {
+  const cfg = THEME_CATEGORIES[theme];
+  if (!cfg) return false;
+
+  // Special case: Spinouts match on funding round
+  if (cfg.roundMatch && cfg.roundMatch.includes(d['Last round'])) return true;
+
+  const industries = (d['Industries'] || '').toLowerCase();
+  const subIndustries = (d['Sub industries'] || '').toLowerCase();
+  const technologies = (d['Technologies'] || '').toLowerCase();
+  const tags = (d['Tags'] || '').toLowerCase();
+  const tagline = (d['Tagline'] || '').toLowerCase();
+
+  // Check industries
+  if (cfg.industries.some(k => industries.includes(k))) return true;
+
+  // Check sub-industries
+  if (cfg.subIndustries.some(k => subIndustries.includes(k))) return true;
+
+  // Check technologies
+  if (cfg.technologies.length && cfg.technologies.some(k => technologies.includes(k))) return true;
+
+  // Check tags
+  if (cfg.tags.some(k => tags.includes(k))) return true;
+
+  // Check tagline with regex patterns
+  if (cfg.tagline.some(pattern => new RegExp(pattern, 'i').test(tagline))) return true;
+
+  return false;
+}
+
+// ── Build Filters ──
+function buildFilters() {
+  // Theme-based category counts
+  const container = document.getElementById('industryFilters');
+  container.innerHTML = '';
+
+  Object.keys(THEME_CATEGORIES).forEach(theme => {
+    const count = allData.filter(d => matchesTheme(d, theme)).length;
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.dataset.value = theme;
+    chip.innerHTML = `${theme}<span class="chip-count">${count}</span>`;
+    chip.addEventListener('click', () => toggleIndustry(theme));
+    container.appendChild(chip);
+  });
+
+  // Stage groups
+  const stageContainer = document.getElementById('stageFilters');
+  stageContainer.innerHTML = '';
+  Object.entries(STAGE_GROUPS).forEach(([group, stages]) => {
+    const count = allData.filter(d => stages.includes(d['Last round'])).length;
+    if (count === 0) return;
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.dataset.value = group;
+    chip.innerHTML = `${group}<span class="chip-count">${count}</span>`;
+    chip.addEventListener('click', () => toggleStage(group));
+    stageContainer.appendChild(chip);
+  });
+}
+
+function toggleIndustry(ind) {
+  activeIndustry = activeIndustry === ind ? null : ind;
+  document.querySelectorAll('#industryFilters .chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.value === activeIndustry);
+  });
+  currentPage = 1;
+  applyFilters();
+  updateClearButton();
+}
+
+function toggleStage(group) {
+  activeStage = activeStage === group ? null : group;
+  document.querySelectorAll('#stageFilters .chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.value === activeStage);
+  });
+  currentPage = 1;
+  applyFilters();
+  updateClearButton();
+}
+
+function updateClearButton() {
+  const btn = document.getElementById('clearFilters');
+  btn.style.display = (activeIndustry || activeStage) ? 'inline-block' : 'none';
+}
+
+document.getElementById('clearFilters').addEventListener('click', () => {
+  activeIndustry = null;
+  activeStage = null;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('searchInput').value = '';
+  currentPage = 1;
+  applyFilters();
+  updateClearButton();
+});
+
+// ── Apply Filters ──
+function applyFilters() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const sort = document.getElementById('sortSelect').value;
+
+  filtered = allData.filter(d => {
+    if (query) {
+      const haystack = `${d['Name']} ${d['Tagline']} ${d['HQ city']} ${d['Industries']} ${d['Sub industries']} ${d['Technologies']}`.toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+    if (activeIndustry) {
+      if (!matchesTheme(d, activeIndustry)) return false;
+    }
+    if (activeStage) {
+      const stages = STAGE_GROUPS[activeStage] || [];
+      if (!stages.includes(d['Last round'])) return false;
+    }
+    return true;
+  });
+
+  // Sort
+  filtered.sort((a, b) => {
+    switch (sort) {
+      case 'name': return a['Name'].localeCompare(b['Name']);
+      case 'name-desc': return b['Name'].localeCompare(a['Name']);
+      case 'funding-desc': return (parseFloat(b['Total funding (USD M)']) || 0) - (parseFloat(a['Total funding (USD M)']) || 0);
+      case 'funding-asc': return (parseFloat(a['Total funding (USD M)']) || 0) - (parseFloat(b['Total funding (USD M)']) || 0);
+      case 'employees-desc': return (parseInt(b['Employees latest number']) || 0) - (parseInt(a['Employees latest number']) || 0);
+      case 'newest': return (parseInt(b['Launch year']) || 0) - (parseInt(a['Launch year']) || 0);
+      default: return 0;
+    }
+  });
+
+  document.getElementById('resultCount').textContent = filtered.length;
+  renderPage();
+  renderPagination();
+}
+
+// ── Render Cards ──
+function renderPage() {
+  const grid = document.getElementById('grid');
+  const start = (currentPage - 1) * PER_PAGE;
+  const pageData = filtered.slice(start, start + PER_PAGE);
+
+  if (pageData.length === 0) {
+    grid.innerHTML = `<div class="no-results" style="grid-column: 1 / -1;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
+      <p>No startups match your filters. Try adjusting your search.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = pageData.map(d => {
+    const industries = (d['Industries'] || '').split(';').map(i => i.trim()).filter(Boolean);
+    const subIndustries = (d['Sub industries'] || '').split(';').map(i => i.trim()).filter(Boolean);
+    const allTags = [...industries, ...subIndustries].slice(0, 4);
+    const round = d['Last round'];
+    const funding = formatFunding(d['Total funding (USD M)']);
+    const empCount = formatEmployees(d['Employees latest number']);
+    const city = d['HQ city'];
+    const year = d['Launch year'];
+    const displayedRound = displayRound(round);
+    const valuation = d['Valuation (USD)'] ? formatBigNumber(parseFloat(d['Valuation (USD)'])) : null;
+
+    let metaHtml = '';
+    const country = d['HQ country'];
+    const flag = countryFlag(country);
+    if (city && city !== 'N/A') metaHtml += `<div class="meta-item">${flag ? `<span style="font-size:1rem;line-height:1;">${flag}</span>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`}<span class="meta-value">${city}</span></div>`;
+    if (funding) metaHtml += `<div class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span class="meta-value">${funding} raised</span></div>`;
+    if (empCount) metaHtml += `<div class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="meta-value">${empCount} ${parseInt(d['Employees latest number']) === 1 ? 'person' : 'people'}</span></div>`;
+    if (year && year !== 'N/A') metaHtml += `<div class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="meta-value">Est. ${year}</span></div>`;
+    if (valuation) metaHtml += `<div class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="meta-value">${valuation} val.</span></div>`;
+
+    const tagsHtml = allTags.map(t => `<span class="card-tag">${t}</span>`).join('');
+
+    let linksHtml = '';
+    if (d['Website'] && d['Website'] !== 'N/A') linksHtml += `<a class="card-link" href="${d['Website']}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Website</a>`;
+    if (d['Dealroom URL'] && d['Dealroom URL'] !== 'N/A') linksHtml += `<a class="card-link" href="${d['Dealroom URL'].replace('app.dealroom.co', '4yfn.dealroom.co')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Dealroom</a>`;
+
+    return `<div class="card">
+      <div class="card-top">
+        <div class="card-name">${d['Name']}</div>
+        ${displayedRound ? `<span class="card-round ${getRoundClass(round)}">${displayedRound}</span>` : ''}
+      </div>
+      ${d['Tagline'] && d['Tagline'] !== 'N/A' ? `<div class="card-tagline">${d['Tagline']}</div>` : ''}
+      ${metaHtml ? `<div class="card-meta">${metaHtml}</div>` : ''}
+      ${tagsHtml ? `<div class="card-tags">${tagsHtml}</div>` : ''}
+      ${linksHtml ? `<div class="card-links">${linksHtml}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── Pagination ──
+function renderPagination() {
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const container = document.getElementById('pagination');
+
+  if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+  let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage - 1}">&laquo; Prev</button>`;
+
+  const range = 2;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
+      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+    } else if (i === currentPage - range - 1 || i === currentPage + range + 1) {
+      html += `<span style="color:var(--gray);">...</span>`;
+    }
+  }
+
+  html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">Next &raquo;</button>`;
+  container.innerHTML = html;
+
+  container.querySelectorAll('.page-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = parseInt(btn.dataset.page);
+      if (p >= 1 && p <= totalPages) {
+        currentPage = p;
+        renderPage();
+        renderPagination();
+        document.querySelector('.filters-section').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+}
+
+// ── Event Listeners ──
+document.getElementById('searchInput').addEventListener('input', () => { currentPage = 1; applyFilters(); });
+document.getElementById('sortSelect').addEventListener('change', () => { applyFilters(); });
+
+// Scroll to top
+const scrollBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+  scrollBtn.classList.toggle('visible', window.scrollY > 500);
+});
+scrollBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ── Init ──
+loadData().catch(err => {
+  document.getElementById('grid').innerHTML = `<div class="no-results" style="grid-column:1/-1;"><p>Failed to load data. Please refresh the page.</p><p style="font-size:0.75rem;margin-top:0.5rem;color:var(--gray);">${err.message}</p></div>`;
+});
+</script>
+</body>
+</html>
