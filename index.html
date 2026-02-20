@@ -210,12 +210,17 @@
 
   /* ── Leaderboard ── */
   .leaderboard-list {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+  .leaderboard-list-inner {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     overflow: hidden;
-    flex: 1;
-    min-height: 0;
   }
   .leaderboard-row {
     display: flex;
@@ -295,6 +300,9 @@
     border-radius: 14px;
     padding: 1.3rem;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   .chart-card-header {
     display: flex;
@@ -2001,7 +2009,7 @@ function loadLeaderboard() {
     }
 
     const maxCount = data[0].count;
-    container.innerHTML = data.map((item, i) => {
+    container.innerHTML = '<div class="leaderboard-list-inner">' + data.map((item, i) => {
       // Try to find domain from allData for favicon
       let favicon = '';
       const match = allData.find(d => d['Name'] === item.name);
@@ -2013,12 +2021,12 @@ function loadLeaderboard() {
       }
       return `<div class="leaderboard-row">
         ${favicon}
-        <span class="leaderboard-name" style="cursor:pointer;" onclick="openDetailModal('${item.name.replace(/'/g,"\\'")}')">${item.name}</span>
+        <span class="leaderboard-name" style="cursor:pointer;" onclick="openSwipeAt('${item.name.replace(/'/g,"\\'")}')">${item.name}</span>
         <div class="leaderboard-bar-wrap">
           <div class="leaderboard-bar" style="width:${(item.count / maxCount * 100).toFixed(1)}%"></div>
         </div>
       </div>`;
-    }).join('');
+    }).join('') + '</div>';
   });
 }
 
@@ -3209,6 +3217,27 @@ function startSwipeSwiping() {
   renderSwipeCard();
 }
 
+function openSwipeAt(name) {
+  let pool = [...allData];
+  pool.sort((a, b) => (parseFloat(b['Dealroom Signal - Rating']) || 0) - (parseFloat(a['Dealroom Signal - Rating']) || 0));
+  const idx = pool.findIndex(d => d['Name'] === name);
+  if (idx === -1) return;
+  if (idx > 0) {
+    const [company] = pool.splice(idx, 1);
+    pool.unshift(company);
+  }
+  swipePool = pool;
+  swipeIndex = 0;
+  document.getElementById('swipeOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  updateSwipeSavedCount();
+  document.getElementById('swipeFilter').style.display = 'none';
+  document.getElementById('swipeStack').style.display = '';
+  document.getElementById('swipeActions').style.display = '';
+  document.querySelector('.swipe-counter').style.display = '';
+  renderSwipeCard();
+}
+
 function closeSwipeMode() {
   document.getElementById('swipeOverlay').classList.remove('open');
   document.body.style.overflow = '';
@@ -3310,7 +3339,7 @@ function toggleGridSave(btn) {
     if (!name) return;
     // Delay single-click to allow double-click detection
     if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; return; }
-    clickTimer = setTimeout(() => { clickTimer = null; openDetailModal(name); }, 250);
+    clickTimer = setTimeout(() => { clickTimer = null; openSwipeAt(name); }, 250);
   });
 
   grid.addEventListener('dblclick', function(e) {
