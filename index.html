@@ -539,26 +539,6 @@
   }
   .result-count { font-size: 0.82rem; color: var(--text3); }
   .result-count span { color: var(--orange); font-weight: 600; }
-  .saved-view-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(135deg, rgba(244,63,94,0.08), rgba(244,63,94,0.04));
-    border: 1px solid rgba(244,63,94,0.2); border-radius: 10px;
-    padding: 0.6rem 1rem; margin-bottom: 0.75rem;
-  }
-  .saved-view-bar span { font-size: 0.82rem; font-weight: 600; color: #f43f5e; }
-  .saved-view-bar button {
-    background: none; border: 1px solid var(--border); border-radius: 6px;
-    padding: 0.35rem 0.8rem; font-size: 0.75rem; font-family: 'Rubik', sans-serif;
-    color: var(--text2); cursor: pointer; transition: all 0.15s;
-  }
-  .saved-view-bar button:hover { border-color: var(--text3); color: var(--text); }
-  .card-unsave {
-    position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(244,63,94,0.08);
-    border: 1px solid rgba(244,63,94,0.2); border-radius: 6px; width: 26px; height: 26px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    color: #f43f5e; font-size: 0.7rem; font-weight: 700; transition: all 0.15s;
-  }
-  .card-unsave:hover { background: #f43f5e; color: #fff; }
   .card-save-btn {
     position: absolute; top: 0.6rem; right: 0.6rem;
     background: none; border: none; cursor: pointer; padding: 0.2rem;
@@ -615,6 +595,17 @@
     transition: all 0.2s;
   }
   .clear-filters:hover { background: var(--orange); color: #fff; }
+  .grid-view-pills {
+    display: inline-flex; margin-left: auto; border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; font-size: 0.72rem; font-family: 'Rubik', sans-serif;
+  }
+  .grid-view-pills button {
+    padding: 0.3rem 0.65rem; border: none; background: transparent;
+    color: var(--text3); cursor: pointer; white-space: nowrap; transition: all 0.15s;
+  }
+  .grid-view-pills button + button { border-left: 1px solid var(--border); }
+  .grid-view-pills button.active { background: var(--orange); color: #fff; }
+  .grid-view-pills button:not(.active):hover { background: var(--bg2); }
 
   .sort-select {
     padding: 0.45rem 0.75rem;
@@ -1442,7 +1433,10 @@
     .filter-row { flex-direction: column; align-items: flex-start; }
     .filter-label { min-width: auto; }
     .charts-grid { grid-template-columns: 1fr !important; }
-    .chart-card-leaderboard { grid-column: auto !important; grid-row: auto !important; }
+    .chart-card-leaderboard { grid-column: auto !important; grid-row: auto !important; max-height: none; }
+    .leaderboard-list { position: static; }
+    .leaderboard-list-inner { position: static; overflow: visible; }
+    .leaderboard-list-inner .leaderboard-row:nth-child(n+6) { display: none; }
     .bar-label { min-width: 70px; font-size: 0.65rem; }
     .bar-fill span { font-size: 0.58rem; }
     .map-viewer { height: 350px; }
@@ -1625,10 +1619,6 @@
       </select>
       <div class="result-count">Showing <span id="resultCount">0</span> startups</div>
     </div>
-    <div class="saved-view-bar" id="savedViewBar" style="display:none;">
-      <span>♥ Viewing your saved companies</span>
-      <button onclick="exitSavedView()">Show all startups</button>
-    </div>
     <div class="filter-rows">
       <div class="filter-row">
         <span class="filter-label">Theme</span>
@@ -1638,6 +1628,11 @@
         <span class="filter-label">Stage</span>
         <div class="filter-chips" id="stageFilters"></div>
         <button class="clear-filters" id="clearFilters" style="display:none;">Clear all</button>
+        <div class="grid-view-pills" id="gridViewPills">
+          <button class="active" onclick="setGridView('all')">All</button>
+          <button id="gridViewSaved" style="display:none" onclick="setGridView('saved')">Saved</button>
+          <button id="gridViewSkipped" style="display:none" onclick="setGridView('hide-skipped')">Hide skipped</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1806,6 +1801,13 @@ const SESSION_ID = sessionStorage.getItem('4yfn_session') || (() => {
   return id;
 })();
 
+// ── Visitor IP & Location (for tracking) ──
+let visitorInfo = { ip: '', city: '', country: '' };
+fetch('https://ipapi.co/json/')
+  .then(r => r.json())
+  .then(data => { visitorInfo = { ip: data.ip || '', city: data.city || '', country: data.country_name || '' }; })
+  .catch(() => {});
+
 // ── Save Tracking (Google Sheets backend, swappable) ──
 const TRACKER_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyCF5PjvoXdzaChNb1XvG5uveZj7dS6wlu4MIPGkPm4QIs2cdi8ZIeyYzWJ0O2HzL-m/exec';
 
@@ -1819,13 +1821,11 @@ const SwipeTracker = {
     if (this._sent.has(companyName)) return;  // already tracked this company in this session
     this._sent.add(companyName);
 
-    // Look up Dealroom ID from allData
+    // Look up Dealroom ID from column A ("ID") in the spreadsheet
     let dealroomId = '';
     const match = (typeof allData !== 'undefined') && allData.find(d => d['Name'] === companyName);
-    if (match && match['Dealroom URL'] && match['Dealroom URL'] !== 'N/A') {
-      // Extract numeric ID from URL like https://app.dealroom.co/companies/foo
-      const idMatch = match['Dealroom URL'].match(/companies\/([^\/\?#]+)/);
-      dealroomId = idMatch ? idMatch[1] : match['Dealroom URL'];
+    if (match && match['ID']) {
+      dealroomId = match['ID'];
     }
 
     const payload = {
@@ -1833,7 +1833,10 @@ const SwipeTracker = {
       timestamp: new Date().toISOString(),
       sessionId: SESSION_ID,
       source: source,  // 'swipe', 'grid', or 'map'
-      dealroomId: dealroomId
+      dealroomId: dealroomId,
+      ip: visitorInfo.ip,
+      city: visitorInfo.city,
+      country: visitorInfo.country
     };
     if (navigator.sendBeacon) {
       navigator.sendBeacon(this._endpoint, JSON.stringify(payload));
@@ -1868,6 +1871,8 @@ let filtered = [];
 let currentPage = 1;
 let activeIndustries = [];
 let activeStages = [];
+let swipeSkipped = JSON.parse(localStorage.getItem('4yfn_skipped') || '[]');
+let gridViewMode = 'all'; // 'all' | 'saved' | 'hide-skipped'
 
 // ── Stage Groups ──
 const STAGE_GROUPS = {
@@ -1983,6 +1988,7 @@ function loadData() {
         buildFounderFilters();
         filterFounders();
         loadLeaderboard();
+        updateGridViewPills();
         resolve();
       } catch (e) { reject(e); }
     };
@@ -2383,6 +2389,25 @@ document.getElementById('clearFilters').addEventListener('click', () => {
   updateClearButton();
 });
 
+function setGridView(mode) {
+  gridViewMode = mode;
+  document.querySelectorAll('#gridViewPills button').forEach(b => b.classList.remove('active'));
+  const map = { 'all': 0, 'saved': 1, 'hide-skipped': 2 };
+  document.querySelectorAll('#gridViewPills button')[map[mode]].classList.add('active');
+  currentPage = 1;
+  applyFilters();
+}
+
+function updateGridViewPills() {
+  const savedBtn = document.getElementById('gridViewSaved');
+  const skippedBtn = document.getElementById('gridViewSkipped');
+  if (savedBtn) savedBtn.style.display = swipeSaved.length ? '' : 'none';
+  if (skippedBtn) skippedBtn.style.display = swipeSkipped.length ? '' : 'none';
+  // If active mode's data is gone, reset to 'all'
+  if (gridViewMode === 'saved' && !swipeSaved.length) setGridView('all');
+  if (gridViewMode === 'hide-skipped' && !swipeSkipped.length) setGridView('all');
+}
+
 // ── Apply Filters ──
 function applyFilters() {
   const query = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -2397,6 +2422,8 @@ function applyFilters() {
     if (activeStages.length) {
       if (!activeStages.includes(getStageGroup(d['Last round']))) return false;
     }
+    if (gridViewMode === 'saved' && !swipeSaved.includes(d['Name'])) return false;
+    if (gridViewMode === 'hide-skipped' && swipeSkipped.includes(d['Name'])) return false;
     return true;
   });
 
@@ -2770,6 +2797,7 @@ function renderPagination() {
     localStorage.setItem('4yfn_saved', JSON.stringify(swipeSaved));
     updateSwipeSavedCount();
     updateNavSavedBadge();
+    updateGridViewPills();
   };
 
   window.mapZoom = function(factor) {
@@ -3091,16 +3119,12 @@ function renderFounders() {
     </div>`;
   }).join('');
 
-  // Try loading founder photos from unavatar (email-guessing approach)
+  // Try loading founder photos from LinkedIn via unavatar
   grid.querySelectorAll('.founder-avatar[data-li]').forEach(el => {
+    const liUsername = el.dataset.li || '';
     const card = el.closest('.founder-card');
     const name = card?.querySelector('.founder-name')?.textContent || '';
-    const domain = el.dataset.domain || '';
-    if (!name || !domain) return;
-    // Build email guess: firstname@domain
-    const firstName = name.split(/\s+/)[0].toLowerCase().replace(/[^a-z]/g, '');
-    if (!firstName || firstName.length < 2) return;
-    const emailGuess = `${firstName}@${domain}`;
+    if (!liUsername) return;
     const img = new Image();
     img.onload = function() {
       if (img.naturalWidth > 1 && img.naturalHeight > 1) {
@@ -3110,7 +3134,7 @@ function renderFounders() {
       }
     };
     img.onerror = function() { /* keep initials */ };
-    img.src = `https://unavatar.io/${emailGuess}?fallback=false`;
+    img.src = `https://unavatar.io/linkedin/${liUsername}?fallback=false`;
     img.alt = name;
   });
 
@@ -3284,40 +3308,13 @@ function updateNavSavedBadge() {
   });
 }
 
-let savedViewActive = false;
-
 function showSavedCompanies() {
   if (!swipeSaved.length) {
     showToast('No saved companies yet — try the swipe explorer!');
     return;
   }
-  savedViewActive = true;
-  document.getElementById('savedViewBar').style.display = '';
   document.getElementById('startups').scrollIntoView({ behavior: 'smooth' });
-  filtered = allData.filter(d => swipeSaved.includes(d['Name']));
-  filtered.sort((a, b) => (parseFloat(b['Dealroom Signal - Rating'])||0) - (parseFloat(a['Dealroom Signal - Rating'])||0));
-  currentPage = 1;
-  renderPage();
-  renderPagination();
-  document.getElementById('resultCount').textContent = `${filtered.length} saved`;
-  // Add remove buttons to cards
-  document.querySelectorAll('.card').forEach(card => {
-    const name = card.querySelector('.card-name')?.textContent?.trim();
-    if (name) {
-      const btn = document.createElement('button');
-      btn.className = 'card-unsave';
-      btn.title = 'Remove from saved';
-      btn.textContent = '✕';
-      btn.onclick = (e) => { e.stopPropagation(); unsaveCompany(name); };
-      card.appendChild(btn);
-    }
-  });
-}
-
-function exitSavedView() {
-  savedViewActive = false;
-  document.getElementById('savedViewBar').style.display = 'none';
-  applyFilters();
+  setGridView('saved');
 }
 
 function toggleGridSave(btn) {
@@ -3338,6 +3335,7 @@ function toggleGridSave(btn) {
   localStorage.setItem('4yfn_saved', JSON.stringify(swipeSaved));
   updateSwipeSavedCount();
   updateNavSavedBadge();
+  updateGridViewPills();
 }
 
 // Grid card: single-click opens detail, double-click toggles favourite
@@ -3376,11 +3374,11 @@ function unsaveCompany(name) {
   swipeSaved = swipeSaved.filter(n => n !== name);
   localStorage.setItem('4yfn_saved', JSON.stringify(swipeSaved));
   updateNavSavedBadge();
+  updateGridViewPills();
   if (swipeSaved.length === 0) {
-    exitSavedView();
     showToast('All companies removed from saved');
-  } else {
-    showSavedCompanies();
+  } else if (gridViewMode === 'saved') {
+    applyFilters();
   }
 }
 
@@ -3436,6 +3434,8 @@ function renderSwipeCard() {
       const li = founderLinkedins[i] || '';
       const liUrl = li && li !== 'N/A' ? (li.startsWith('http') ? li : `https://${li}`) : '';
       const liIcon = liUrl ? `<a href="${liUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>` : '';
+      let liUsername = '';
+      if (li) { const m = li.match(/linkedin\.com\/in\/([^\/\?]+)/); if (m) liUsername = m[1].replace(/\/$/, ''); }
       let sub = [];
       const uni = (founderUnis[i] || '').split(',')[0].trim();
       const exp = (founderExps[i] || '').split(',')[0].trim();
@@ -3445,7 +3445,7 @@ function renderSwipeCard() {
       if (isSerial) badges += '<span class="swipe-founder-badge sf">Serial</span>';
       if (isTopFounder) badges += '<span class="swipe-founder-badge tf">Top</span>';
       return `<div class="swipe-founder-row">
-        <div class="swipe-founder-avatar" data-name="${fn}" data-domain="${companyDomain}" style="background:linear-gradient(135deg,${gc1},${gc2})">${initials}</div>
+        <div class="swipe-founder-avatar" data-li="${liUsername}" style="background:linear-gradient(135deg,${gc1},${gc2})">${initials}</div>
         <div class="swipe-founder-details">
           <div class="swipe-founder-name">${fn}${liIcon}${i===0 ? badges : ''}</div>
           ${sub.length ? `<div class="swipe-founder-sub">${sub.join(' · ')}</div>` : ''}
@@ -3494,13 +3494,10 @@ function renderSwipeCard() {
   // Set up touch/mouse swipe
   setupSwipeGesture(stack.querySelector('.swipe-card'));
 
-  // Load founder photos via unavatar
-  stack.querySelectorAll('.swipe-founder-avatar[data-name]').forEach(el => {
-    const name = el.dataset.name || '';
-    const domain = el.dataset.domain || '';
-    if (!name || !domain) return;
-    const firstName = name.split(/\s+/)[0].toLowerCase().replace(/[^a-z]/g, '');
-    if (!firstName || firstName.length < 2) return;
+  // Load founder photos from LinkedIn via unavatar
+  stack.querySelectorAll('.swipe-founder-avatar[data-li]').forEach(el => {
+    const liUsername = el.dataset.li || '';
+    if (!liUsername) return;
     const img = new Image();
     img.onload = function() {
       if (img.naturalWidth > 1 && img.naturalHeight > 1) {
@@ -3510,8 +3507,8 @@ function renderSwipeCard() {
       }
     };
     img.onerror = function() {};
-    img.src = `https://unavatar.io/${firstName}@${domain}?fallback=false`;
-    img.alt = name;
+    img.src = `https://unavatar.io/linkedin/${liUsername}?fallback=false`;
+    img.alt = liUsername;
     img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
   });
 }
@@ -3612,9 +3609,16 @@ function swipeAction(direction) {
       SwipeTracker.trackSave(name, 'swipe');
       localStorage.setItem('4yfn_saved', JSON.stringify(swipeSaved));
       updateSwipeSavedCount();
+      updateGridViewPills();
     }
     card.classList.add('exit-right');
   } else {
+    const name = swipePool[swipeIndex]['Name'];
+    if (!swipeSkipped.includes(name)) {
+      swipeSkipped.push(name);
+      localStorage.setItem('4yfn_skipped', JSON.stringify(swipeSkipped));
+      updateGridViewPills();
+    }
     card.classList.add('exit-left');
   }
 
