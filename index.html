@@ -302,7 +302,13 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+  }
+  .chart-card .bar-chart,
+  .chart-card .col-chart,
+  .chart-card .treemap,
+  .chart-card .donut-chart {
+    margin-top: auto;
+    margin-bottom: auto;
   }
   .chart-card-header {
     display: flex;
@@ -395,7 +401,7 @@
     margin-top: 0.75rem;
     border-top: 1px solid var(--border);
   }
-  .chart-watermark img { height: 16px; }
+  .chart-watermark img { height: 16px; filter: invert(1); }
   .chart-watermark .wm-divider { width: 1px; height: 14px; background: var(--border); }
   .chart-watermark span { font-size: 0.65rem; color: var(--text3); }
   .chart-watermark .wm-dr-logo { height: 14px; opacity: 0.5; }
@@ -1123,6 +1129,13 @@
     font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700;
     color: var(--text); margin-bottom: 0.25rem;
   }
+  .swipe-save-btn {
+    position: absolute; top: 1rem; right: 1rem;
+    background: none; border: none; cursor: pointer; padding: 0.3rem;
+    color: var(--border2); transition: all 0.2s; line-height: 0; z-index: 5;
+  }
+  .swipe-save-btn:hover { color: #f43f5e; transform: scale(1.2); }
+  .swipe-save-btn.is-saved { color: #f43f5e; }
   .swipe-card-tagline { font-size: 0.85rem; color: var(--text2); line-height: 1.5; margin-bottom: 0.75rem; }
   .swipe-card-meta { display: flex; flex-wrap: wrap; gap: 0.3rem 0.6rem; font-size: 0.78rem; color: var(--text3); margin-bottom: 0.75rem; }
   .swipe-card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.75rem; }
@@ -2281,11 +2294,13 @@ async function shareChart(chartId) {
   const titleEl = card.querySelector('.chart-title');
   const origTitle = titleEl ? titleEl.textContent.trim() : '';
   if (titleEl) titleEl.textContent = '4YFN 2026 startups: ' + origTitle;
-  // Set 4YFN logo data URI on watermark images for html2canvas
+  // Set 4YFN logo data URI on watermark images and wait for load
   const wmImgs = card.querySelectorAll('.chart-watermark img.wm-4yfn-logo');
-  for (const img of wmImgs) {
+  await Promise.all([...wmImgs].map(img => new Promise(resolve => {
+    img.onload = resolve;
+    img.onerror = resolve;
     img.src = logo4yfnDataUri;
-  }
+  })));
   try {
     const canvas = await html2canvas(card, { backgroundColor: '#ffffff', scale: 2, useCORS: true });
     const link = document.createElement('a');
@@ -3462,7 +3477,10 @@ function renderSwipeCard() {
       <div class="swipe-hint hint-left" id="hintLeft">SKIP</div>
       <div class="swipe-hint hint-right" id="hintRight">SAVE ♥</div>
       <div class="swipe-card-top">
-        <div class="swipe-card-name">${d['Name']}${isSaved ? ' ♥' : ''}</div>
+        <div class="swipe-card-name">${d['Name']}</div>
+        <button class="swipe-save-btn${isSaved ? ' is-saved' : ''}" onclick="event.stopPropagation();swipeAction('right')" title="Save and next">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+        </button>
         ${d['Tagline'] && d['Tagline'] !== 'N/A' ? `<div class="swipe-card-tagline">${d['Tagline']}</div>` : ''}
         <div class="swipe-card-meta">${meta.join(' &nbsp;·&nbsp; ')}</div>
         ${boothHtml}
@@ -3556,6 +3574,7 @@ function setupSwipeGesture(card) {
   // Pointer events for desktop
   card.addEventListener('pointerdown', e => {
     if (e.pointerType === 'touch') return; // handled by touch events below
+    if (e.target.closest('.swipe-save-btn')) return; // let heart button handle its own click
     card.setPointerCapture(e.pointerId);
     onStart(e.clientX, e.clientY);
   });
@@ -3568,6 +3587,7 @@ function setupSwipeGesture(card) {
 
   // Touch events for mobile — these fire before pointer events and give us control
   card.addEventListener('touchstart', e => {
+    if (e.target.closest('.swipe-save-btn')) return; // let heart button handle its own tap
     const t = e.touches[0];
     onStart(t.clientX, t.clientY);
   }, { passive: true });
