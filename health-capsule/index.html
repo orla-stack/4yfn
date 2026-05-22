@@ -480,6 +480,141 @@
       letter-spacing: 0.08em;
       margin-left: 4px;
     }
+
+    /* ── Biorce spotlight ─────────────────────────────────── */
+    .spot-hero {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(99, 0, 255, 0.04) 0%, rgba(0, 181, 236, 0.06) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .spot-logo {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spot-logo img { width: 100%; height: auto; display: block; }
+    .spot-id { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .spot-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .spot-tagline {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: -0.005em;
+    }
+    .spot-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .spot-meta a {
+      color: var(--uv);
+      text-decoration: none;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 600;
+    }
+
+    .spot-stats {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .spot-stat {
+      padding: 16px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .spot-stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--uv);
+      line-height: 1;
+    }
+    .spot-stat-num.coral { color: var(--coral); }
+    .spot-stat-num.blue { color: var(--blue); }
+    .spot-stat-num.violet { color: var(--deep-violet); }
+    .spot-stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .spot-stat-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .spot-about {
+      margin-top: 18px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      letter-spacing: -0.003em;
+    }
+    .spot-about strong { color: var(--text); font-weight: 700; }
+
+    .spot-backers {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      align-items: center;
+    }
+    .spot-backers-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-right: 4px;
+    }
+    .spot-chip {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(99, 0, 255, 0.07);
+      border: 1px solid rgba(99, 0, 255, 0.12);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    @media (max-width: 700px) {
+      .spot-hero { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .spot-stats { grid-template-columns: repeat(2, 1fr); }
+      .spot-name { font-size: 22px; }
+    }
   </style>
 </head>
 <body>
@@ -624,6 +759,77 @@
     <div class="subtitle">Most active investors in 4YFN Health portfolio companies, ranked by rounds participated in</div>
 
     <div class="lb-list" id="leaderboard"></div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="110" height="26"><defs><style>.cls-1{fill:#001234;}.cls-2{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M211.51,37.69a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,207.45,34a7.75,7.75,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.31,7.31,0,0,1,2.44,1.46A6.82,6.82,0,0,1,221.55,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5A8.69,8.69,0,0,1,211.51,37.69Zm.48-9.2A3.53,3.53,0,0,0,211.1,31a3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0A3.56,3.56,0,0,0,217.9,31a3.54,3.54,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-13.49,9.2a7.31,7.31,0,0,1-2.44-1.46A6.89,6.89,0,0,1,194.44,34a7.63,7.63,0,0,1,0-5.93,6.79,6.79,0,0,1,1.62-2.27,7.15,7.15,0,0,1,2.44-1.46,8.6,8.6,0,0,1,3-.5,8.89,8.89,0,0,1,2.56.4,5.37,5.37,0,0,1,2.33,1.43l-2.8,2.94a2.25,2.25,0,0,0-.87-.75,2.47,2.47,0,0,0-1.22-.29,3.22,3.22,0,0,0-2.5,1,3.52,3.52,0,0,0-.89,2.5A3.53,3.53,0,0,0,199,33.5a3.22,3.22,0,0,0,2.5,1,2.26,2.26,0,0,0,1.22-.3,3.63,3.63,0,0,0,.87-.74l2.8,2.94A5.35,5.35,0,0,1,204,37.78a8.26,8.26,0,0,1-2.56.41A8.6,8.6,0,0,1,198.5,37.69Zm-48.73,0a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,145.71,34a7.63,7.63,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.15,7.15,0,0,1,2.44,1.46A6.82,6.82,0,0,1,159.81,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5,8.69,8.69,0,0,1-3-.5Zm.48-9.2a3.53,3.53,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-17.2,9.2a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,129,34,7.75,7.75,0,0,1,129,28a6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,9.16,9.16,0,0,1,6,0,7.31,7.31,0,0,1,2.44,1.46A7,7,0,0,1,143.09,28a7.75,7.75,0,0,1,0,5.93,7.07,7.07,0,0,1-1.63,2.27A7.31,7.31,0,0,1,139,37.69a9.16,9.16,0,0,1-6,0Zm.48-9.2a3.48,3.48,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0ZM99.32,37.92a4.41,4.41,0,0,1-1.57-.8,3.83,3.83,0,0,1-1.08-1.32,4.15,4.15,0,0,1-.4-1.84,4.21,4.21,0,0,1,.44-2,3.87,3.87,0,0,1,1.19-1.35,6,6,0,0,1,1.71-.84,13.6,13.6,0,0,1,2-.44,20.62,20.62,0,0,1,2.07-.17l1.91,0a2.23,2.23,0,0,0-.81-1.79,2.91,2.91,0,0,0-1.91-.67,4.35,4.35,0,0,0-1.91.44,5.29,5.29,0,0,0-1.54,1.2L97.15,26a7.65,7.65,0,0,1,2.77-1.65,9.87,9.87,0,0,1,3.28-.56,8.68,8.68,0,0,1,3.07.47,4.47,4.47,0,0,1,1.92,1.37,5.21,5.21,0,0,1,1,2.22,14.61,14.61,0,0,1,.29,3v7h-3.9V36.14h-.06a4,4,0,0,1-1.88,1.58,6.37,6.37,0,0,1-2.48.48,6.09,6.09,0,0,1-1.84-.28Zm4-6a6.43,6.43,0,0,0-1.38.24,3,3,0,0,0-1.13.6,1.35,1.35,0,0,0-.47,1.1A1.21,1.21,0,0,0,101,35a2.69,2.69,0,0,0,1.36.36,4.1,4.1,0,0,0,1.2-.17,3.45,3.45,0,0,0,1-.48,2.23,2.23,0,0,0,1-1.92v-.9h-1c-.31,0-.71,0-1.2,0ZM85.47,37.69A7,7,0,0,1,83,36.23,6.78,6.78,0,0,1,81.41,34a7.75,7.75,0,0,1,0-5.93A6.78,6.78,0,0,1,83,25.76a7,7,0,0,1,2.43-1.45,8.46,8.46,0,0,1,3-.51,6.66,6.66,0,0,1,2.68.51,5.56,5.56,0,0,1,2,1.45A6.63,6.63,0,0,1,94.45,28a9.08,9.08,0,0,1,.46,3v1.32H85.06a3.32,3.32,0,0,0,1.1,1.94,3.12,3.12,0,0,0,2.09.71A3.05,3.05,0,0,0,90,34.51a4.8,4.8,0,0,0,1.26-1.2l3,2.17a6.7,6.7,0,0,1-2.57,2,7.71,7.71,0,0,1-3.23.71,8.58,8.58,0,0,1-3-.5Zm1.34-10.62a3,3,0,0,0-.91.58,2.42,2.42,0,0,0-.6.82,2.66,2.66,0,0,0-.24,1h5.6A2.45,2.45,0,0,0,90,27.61a2.51,2.51,0,0,0-1.9-.77,3.24,3.24,0,0,0-1.23.23ZM67.44,37.67A6.07,6.07,0,0,1,65.3,36.2,6.63,6.63,0,0,1,63.93,34a8.17,8.17,0,0,1-.48-2.85,8.9,8.9,0,0,1,.44-2.76A7.32,7.32,0,0,1,65.13,26a6.19,6.19,0,0,1,2-1.63,5.58,5.58,0,0,1,2.63-.6,7.49,7.49,0,0,1,2.48.4,4,4,0,0,1,1.88,1.41h0v-9.1h4.24V37.86h-3.9V36.05h0a4.66,4.66,0,0,1-.66.74,5.56,5.56,0,0,1-1,.7,6.46,6.46,0,0,1-1.21.51,5,5,0,0,1-1.38.2,7.11,7.11,0,0,1-2.77-.53Zm1.14-9.19A3.56,3.56,0,0,0,67.69,31a3.53,3.53,0,0,0,.89,2.51,3.74,3.74,0,0,0,5,0A3.53,3.53,0,0,0,74.47,31a3.56,3.56,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm119.51,9.35a2.56,2.56,0,0,1-.83-.55,2.41,2.41,0,0,1-.55-.83,2.58,2.58,0,0,1-.2-1,2.54,2.54,0,0,1,.2-1A2.5,2.5,0,0,1,188.09,33a2.76,2.76,0,0,1,1-.2,2.73,2.73,0,0,1,1,.2,2.6,2.6,0,0,1,.84.55,2.62,2.62,0,0,1,.75,1.85,2.76,2.76,0,0,1-.2,1,2.73,2.73,0,0,1-.55.83,2.6,2.6,0,0,1-.84.55,2.73,2.73,0,0,1-1,.2,2.67,2.67,0,0,1-1-.2Zm-8.38,0v-8a3.32,3.32,0,0,0-.41-1.66,1.56,1.56,0,0,0-1.46-.68,2.75,2.75,0,0,0-1.23.23,2,2,0,0,0-.79.67,2.77,2.77,0,0,0-.43,1,5.28,5.28,0,0,0-.12,1.19v7.26H171V30.6c0-.24,0-.54,0-.9a3.92,3.92,0,0,0-.2-1,2.05,2.05,0,0,0-.55-.82,1.67,1.67,0,0,0-1.12-.33,2.67,2.67,0,0,0-1.33.29,2,2,0,0,0-.78.79,3.4,3.4,0,0,0-.35,1.12,9.36,9.36,0,0,0-.09,1.3v6.83h-4.24V24.14h4.07V26h.06a3.18,3.18,0,0,1,.57-.79,3.71,3.71,0,0,1,.87-.71,5.18,5.18,0,0,1,1.16-.51,4.87,4.87,0,0,1,1.42-.2,5.46,5.46,0,0,1,2.56.59,3.78,3.78,0,0,1,1.68,1.87,4.53,4.53,0,0,1,1.78-1.9,5.42,5.42,0,0,1,2.57-.56,5.34,5.34,0,0,1,2.33.47,3.7,3.7,0,0,1,1.5,1.27,5.37,5.37,0,0,1,.8,1.89,10.65,10.65,0,0,1,.23,2.33v8.1Zm-61.28,0V24.13h4.24v2.2h0a5.21,5.21,0,0,1,1.62-1.9,4.07,4.07,0,0,1,2.35-.64l.73,0a3.87,3.87,0,0,1,.68.12V27.8a6.77,6.77,0,0,0-.89-.21,5.62,5.62,0,0,0-.92-.07,4.55,4.55,0,0,0-1.93.34,2.48,2.48,0,0,0-1.08.95,3.58,3.58,0,0,0-.5,1.45,12.9,12.9,0,0,0-.11,1.86v5.73Zm-6.76,0V16.51h4.24V37.86Z"/><path d="M1.5,0H51.89a1.5,1.5,0,0,1,1.5,1.5V51.77a1.52,1.52,0,0,1-1.51,1.51H1.51A1.51,1.51,0,0,1,0,51.77H0V1.5A1.5,1.5,0,0,1,1.5,0Z"/><path class="cls-2" d="M17,38.2v-17h6.21v17Zm14,0H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23c0,3.85-1.06,6.83-3.19,8.91s-5.11,3.13-9,3.14ZM31,33.07h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72,4.66,4.66,0,0,0-3.82-1.53H31ZM9.15,38.2V27.55h6.21V38.2Z"/></g></g></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       CHART 5: Company spotlight — Biorce
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <h1 class="title">Spotlight: Biorce</h1>
+    <div class="subtitle">A breakout AI biotech from the 4YFN Health 2026 cohort, riding the AI-x-clinical-trials wave</div>
+
+    <div class="spot-hero">
+      <div class="spot-logo">
+        <img src="data:image/png;base64,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" alt="Biorce logo" />
+      </div>
+      <div class="spot-id">
+        <div class="spot-name">Biorce</div>
+        <div class="spot-tagline">Revolutionising drug development with AI for clinical trials</div>
+        <div class="spot-meta">Barcelona · Founded Jan 2024 · <a href="https://biorce.com">biorce.com</a></div>
+      </div>
+    </div>
+
+    <div class="spot-stats">
+      <div class="spot-stat">
+        <div class="spot-stat-num">$61.4M</div>
+        <div class="spot-stat-label">Total raised</div>
+        <div class="spot-stat-sub">Across 4 rounds since Nov 2024</div>
+      </div>
+      <div class="spot-stat">
+        <div class="spot-stat-num coral">13 → 111</div>
+        <div class="spot-stat-label">Headcount growth</div>
+        <div class="spot-stat-sub">Oct 2024 → Apr 2026</div>
+      </div>
+      <div class="spot-stat">
+        <div class="spot-stat-num blue">95</div>
+        <div class="spot-stat-label">Dealroom Signal</div>
+        <div class="spot-stat-sub">Top-tier momentum score</div>
+      </div>
+      <div class="spot-stat">
+        <div class="spot-stat-num violet">Breakout</div>
+        <div class="spot-stat-label">Growth stage</div>
+        <div class="spot-stat-sub">Series A closed Feb 2026</div>
+      </div>
+    </div>
+
+    <div class="spot-about">
+      Barcelona-based deeptech building <strong>Jarvis</strong> — a clinical AI assistant designed to give researchers fast, universal access to clinical-trial data — with the goal of accelerating drug development and cutting the cost of getting treatments to patients.
+    </div>
+
+    <div class="spot-backers">
+      <span class="spot-backers-label">Backed by</span>
+      <span class="spot-chip">DST Global</span>
+      <span class="spot-chip">Norrsken VC</span>
+      <span class="spot-chip">Plug and Play</span>
+      <span class="spot-chip">Mustard Seed MAZE</span>
+      <span class="spot-chip">Outsized Ventures</span>
+      <span class="spot-chip">YZR Capital</span>
+      <span class="spot-chip">Arthur Mensch</span>
+      <span class="spot-chip">Nikolay Storonsky</span>
+      <span class="spot-chip">Paulo Rosado</span>
+    </div>
 
     <div class="footer">
       <span class="source">Source: Dealroom.co</span>
