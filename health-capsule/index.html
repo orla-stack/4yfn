@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     :root {
       /* Dealroom neutrals */
@@ -83,12 +84,39 @@
     }
 
     .card {
+      position: relative;
       background: var(--card);
       border-radius: 24px;
       padding: 36px 40px 26px;
       box-shadow: 0 4px 16px rgba(99, 0, 255, 0.12), 0 16px 48px rgba(99, 0, 255, 0.15);
       border: 1px solid var(--border);
     }
+
+    .download-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #FFFFFF;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+      z-index: 10;
+    }
+    .download-btn:hover {
+      background: var(--uv);
+      color: #FFFFFF;
+      border-color: var(--uv);
+    }
+    .download-btn:active { transform: scale(0.95); }
+    .download-btn svg { display: block; }
 
     .title {
       font-family: 'Space Grotesk', system-ui, sans-serif;
@@ -359,6 +387,9 @@
        CHART 1: Global Health VC with 2026 projection
        ════════════════════════════════════════════════════════════════ -->
   <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
     <h1 class="title">Global Health VC on track to rebound to $82B in 2026</h1>
     <div class="subtitle">Annual venture capital invested in health companies worldwide, with 2026 figures annualised from year-to-date</div>
 
@@ -385,6 +416,9 @@
        CHART 2: AI share of Health VC over time
        ════════════════════════════════════════════════════════════════ -->
   <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
     <h1 class="title">AI share of Health VC has surged from 2% to a projected 31% in 2026</h1>
     <div class="subtitle">AI-enabled health companies' share of global health venture capital funding</div>
 
@@ -410,6 +444,9 @@
        CHART 3: Playful overlapping semi-transparent bubble stats
        ════════════════════════════════════════════════════════════════ -->
   <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
     <h1 class="title">4YFN Health 2026 at a glance</h1>
     <div class="subtitle">Exhibitor and funding snapshot of the 4YFN Health cohort</div>
 
@@ -452,6 +489,9 @@
        CHART 4: Most active investors leaderboard
        ════════════════════════════════════════════════════════════════ -->
   <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
     <h1 class="title">EIT Health is the runaway leader, backing 43 of 206 4YFN Health rounds</h1>
     <div class="subtitle">Most active investors in 4YFN Health portfolio companies, ranked by rounds participated in</div>
 
@@ -672,6 +712,43 @@
           }
         }
       }
+    });
+  })();
+
+  // ── Download-as-PNG buttons ───────────────────────────────────
+  (function wireDownloadButtons() {
+    function slugify(str) {
+      return str.toLowerCase().trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .slice(0, 60);
+    }
+
+    document.querySelectorAll('.card .download-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('.card');
+        const titleEl = card.querySelector('.title');
+        const filename = '4yfn-health-' + (titleEl ? slugify(titleEl.textContent) : 'chart') + '.png';
+
+        btn.disabled = true;
+        try {
+          const canvas = await html2canvas(card, {
+            backgroundColor: '#FFFFFF',
+            scale: 2,
+            useCORS: true,
+            ignoreElements: el => el.classList && el.classList.contains('download-btn'),
+          });
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        } catch (err) {
+          console.error('Chart export failed', err);
+        } finally {
+          btn.disabled = false;
+        }
+      });
     });
   })();
 
