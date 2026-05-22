@@ -611,10 +611,9 @@
 
     .spot-backers {
       margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 8px;
-      align-items: center;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-secondary);
     }
     .spot-backers-label {
       font-size: 11px;
@@ -622,16 +621,11 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-right: 4px;
+      margin-right: 8px;
     }
-    .spot-chip {
-      font-size: 12px;
-      font-weight: 600;
+    .spot-backers-list {
+      font-weight: 500;
       color: var(--text);
-      background: rgba(99, 0, 255, 0.07);
-      border: 1px solid rgba(99, 0, 255, 0.12);
-      padding: 4px 10px;
-      border-radius: 999px;
     }
 
     @media (max-width: 700px) {
@@ -821,14 +815,6 @@
         <div class="spot-stat-label">Total raised</div>
         <div class="spot-stat-sub">Across 3 rounds since Nov 2024</div>
       </div>
-      <div class="spot-stat award">
-        <div class="spot-stat-num with-icon gradient">
-          <svg class="award-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14v3a4 4 0 0 1-4 4h-.05A4 4 0 0 1 13 13.86V17h3v3H8v-3h3v-3.14A4 4 0 0 1 9.05 10H9a4 4 0 0 1-4-4V3zm2 2v1a2 2 0 0 0 2 2h.18A4 4 0 0 1 9 7V5H7zm10 0v2a4 4 0 0 1-.18 1.16H17a2 2 0 0 0 2-2V5h-2z"/></svg>
-          Winner
-        </div>
-        <div class="spot-stat-label">4YFN Award · 2026</div>
-        <div class="spot-stat-sub">Recognised at the 4YFN Awards in Barcelona</div>
-      </div>
       <div class="spot-stat">
         <div class="spot-stat-num coral">13 → 111</div>
         <div class="spot-stat-label">Headcount growth</div>
@@ -839,6 +825,14 @@
         <div class="spot-stat-label">Dealroom Signal</div>
         <div class="spot-stat-sub">Top-tier momentum score</div>
       </div>
+      <div class="spot-stat award">
+        <div class="spot-stat-num with-icon gradient">
+          <svg class="award-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14v3a4 4 0 0 1-4 4h-.05A4 4 0 0 1 13 13.86V17h3v3H8v-3h3v-3.14A4 4 0 0 1 9.05 10H9a4 4 0 0 1-4-4V3zm2 2v1a2 2 0 0 0 2 2h.18A4 4 0 0 1 9 7V5H7zm10 0v2a4 4 0 0 1-.18 1.16H17a2 2 0 0 0 2-2V5h-2z"/></svg>
+          Winner
+        </div>
+        <div class="spot-stat-label">4YFN Award · 2026</div>
+        <div class="spot-stat-sub">Recognised at the 4YFN Awards in Barcelona</div>
+      </div>
     </div>
 
     <div class="spot-about">
@@ -847,15 +841,7 @@
 
     <div class="spot-backers">
       <span class="spot-backers-label">Backed by</span>
-      <span class="spot-chip">DST Global</span>
-      <span class="spot-chip">Norrsken VC</span>
-      <span class="spot-chip">Plug and Play</span>
-      <span class="spot-chip">Mustard Seed MAZE</span>
-      <span class="spot-chip">Outsized Ventures</span>
-      <span class="spot-chip">YZR Capital</span>
-      <span class="spot-chip">Arthur Mensch</span>
-      <span class="spot-chip">Nikolay Storonsky</span>
-      <span class="spot-chip">Paulo Rosado</span>
+      <span class="spot-backers-list">DST Global · Norrsken VC · Plug and Play · Mustard Seed MAZE · Outsized Ventures · YZR Capital · Arthur Mensch · Nikolay Storonsky · Paulo Rosado</span>
     </div>
 
     <div class="footer">
