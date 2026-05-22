@@ -733,6 +733,12 @@
         const filename = '4yfn-health-' + (titleEl ? slugify(titleEl.textContent) : 'chart') + '.png';
 
         btn.disabled = true;
+        const prevBorder = card.style.border;
+        const prevRadius = card.style.borderRadius;
+        const prevShadow = card.style.boxShadow;
+        card.style.border = 'none';
+        card.style.borderRadius = '0';
+        card.style.boxShadow = 'none';
         try {
           const canvas = await html2canvas(card, {
             backgroundColor: '#FFFFFF',
@@ -747,6 +753,9 @@
         } catch (err) {
           console.error('Chart export failed', err);
         } finally {
+          card.style.border = prevBorder;
+          card.style.borderRadius = prevRadius;
+          card.style.boxShadow = prevShadow;
           btn.disabled = false;
         }
       });
