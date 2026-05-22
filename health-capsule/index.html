@@ -562,13 +562,6 @@
     .spot-stat-num.coral { color: var(--coral); }
     .spot-stat-num.blue { color: var(--blue); }
     .spot-stat-num.violet { color: var(--deep-violet); }
-    .spot-stat-num.gradient {
-      background: linear-gradient(90deg, var(--uv) 0%, var(--coral) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
-    }
     .spot-stat-num.with-icon {
       display: inline-flex;
       align-items: center;
@@ -577,7 +570,6 @@
     .spot-stat-num .award-icon {
       width: 24px;
       height: 24px;
-      color: var(--uv);
       flex-shrink: 0;
     }
 
@@ -826,7 +818,7 @@
         <div class="spot-stat-sub">Top-tier momentum score</div>
       </div>
       <div class="spot-stat award">
-        <div class="spot-stat-num with-icon gradient">
+        <div class="spot-stat-num with-icon violet">
           <svg class="award-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14v3a4 4 0 0 1-4 4h-.05A4 4 0 0 1 13 13.86V17h3v3H8v-3h3v-3.14A4 4 0 0 1 9.05 10H9a4 4 0 0 1-4-4V3zm2 2v1a2 2 0 0 0 2 2h.18A4 4 0 0 1 9 7V5H7zm10 0v2a4 4 0 0 1-.18 1.16H17a2 2 0 0 0 2-2V5h-2z"/></svg>
           Winner
         </div>
