@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4YFN26 Spinouts Capsule — Dealroom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      /* Dealroom neutrals */
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      --border: rgba(0,0,0,0.08);
+      --grid: rgba(0,0,0,0.06);
+      /* 4YFN OFFICIAL brand palette */
+      --uv: #6300FF;          /* Hero Ultra Violet */
+      --coral: #FF6131;       /* Coral */
+      --green: #99FF00;       /* Electric Green */
+      --blue: #00B5EC;        /* Electric Blue */
+      --deep-violet: #901C80; /* Deep Violet */
+      --yellow: #FFF8CC;      /* Light Yellow */
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      /* Primary gradient: Ultra Violet majority → Coral → Light Yellow, with Deep Violet anchor */
+      background:
+        radial-gradient(ellipse at 85% 15%, var(--yellow) 0%, transparent 38%),
+        radial-gradient(ellipse at 95% 55%, var(--coral) 0%, transparent 45%),
+        radial-gradient(ellipse at 10% 90%, var(--deep-violet) 0%, transparent 50%),
+        linear-gradient(135deg, var(--uv) 0%, var(--uv) 35%, #7A1FE8 60%, var(--deep-violet) 100%);
+      background-attachment: fixed;
+      font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      padding: 32px 16px;
+      min-height: 100vh;
+    }
+
+    .outer {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ── Capsule master header ─────────────────────────── */
+    .capsule-header {
+      text-align: center;
+      padding: 12px 16px 4px;
+      color: #FFFFFF;
+    }
+    .capsule-eyebrow {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(255, 255, 255, 0.75);
+      margin-bottom: 12px;
+    }
+    .capsule-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      color: #FFFFFF;
+      margin: 0;
+      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.2);
+    }
+    @media (max-width: 700px) {
+      .capsule-title { font-size: 30px; }
+      .capsule-eyebrow { font-size: 11px; letter-spacing: 0.14em; }
+    }
+
+    /* ── PDF download button ─────────────────────────────── */
+    .pdf-download-btn {
+      margin: 22px auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 22px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--uv);
+      border: none;
+      border-radius: 999px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .pdf-download-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+      background: #FFFFFF;
+    }
+    .pdf-download-btn:active { transform: translateY(0); }
+    .pdf-download-btn:disabled {
+      opacity: 0.7;
+      cursor: wait;
+      transform: none;
+    }
+    .pdf-download-btn svg { display: block; }
+
+    /* ── PDF cover page (rendered off-screen, captured into PDF) ── */
+    .pdf-cover {
+      position: absolute;
+      left: -10000px;
+      top: 0;
+      width: 1188px;
+      height: 840px;
+      background:
+        radial-gradient(ellipse at 85% 15%, var(--yellow) 0%, transparent 38%),
+        radial-gradient(ellipse at 95% 55%, var(--coral) 0%, transparent 45%),
+        radial-gradient(ellipse at 10% 90%, var(--deep-violet) 0%, transparent 50%),
+        linear-gradient(135deg, var(--uv) 0%, var(--uv) 35%, #7A1FE8 60%, var(--deep-violet) 100%);
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 80px 90px;
+      box-sizing: border-box;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+    .pdf-cover-top { display: flex; flex-direction: column; gap: 28px; }
+    .pdf-cover-eyebrow {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.78);
+    }
+    .pdf-cover-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 92px;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.02;
+      color: #FFFFFF;
+      margin: 0;
+      max-width: 900px;
+    }
+    .pdf-cover-sub {
+      font-size: 20px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.82);
+      max-width: 720px;
+      letter-spacing: -0.005em;
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+    .pdf-cover-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .pdf-cover-meta {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.65);
+    }
+    .pdf-cover-logos {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .pdf-cover-logos .partner-logo {
+      color: #FFFFFF;
+      width: 56px;
+      height: 52px;
+    }
+    .pdf-cover-logos .logo-divider {
+      background: rgba(255, 255, 255, 0.4);
+      height: 36px;
+    }
+
+    /* Back cover: centred farewell layout */
+    .pdf-back-cover .pdf-cover-title { text-align: center; }
+    .pdf-back-cover .pdf-cover-sub { text-align: center; max-width: 720px; margin-left: auto; margin-right: auto; }
+    .pdf-back-cover .pdf-cover-eyebrow { text-align: center; }
+    .pdf-back-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+    .pdf-back-date {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: rgba(255, 255, 255, 0.92);
+      margin-top: 4px;
+    }
+    .pdf-back-sites {
+      margin-top: 14px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.78);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .pdf-back-sites span { color: rgba(255, 255, 255, 0.5); }
+
+    .card {
+      position: relative;
+      background: var(--card);
+      border-radius: 24px;
+      padding: 36px 40px 26px;
+      box-shadow: 0 4px 16px rgba(99, 0, 255, 0.12), 0 16px 48px rgba(99, 0, 255, 0.15);
+      border: 1px solid var(--border);
+    }
+
+    .download-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #FFFFFF;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+      z-index: 10;
+    }
+    .download-btn:hover {
+      background: var(--uv);
+      color: #FFFFFF;
+      border-color: var(--uv);
+    }
+    .download-btn:active { transform: scale(0.95); }
+    .download-btn svg { display: block; }
+
+    .title {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      color: var(--text);
+      margin: 0;
+      padding-right: 52px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      letter-spacing: -0.005em;
+    }
+
+    .legend {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .legend-bar {
+      width: 14px;
+      height: 4px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .chart-wrap {
+      position: relative;
+      margin-top: 20px;
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+    .source {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .logos {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .logos svg { display: block; }
+    .partner-logo {
+      display: block;
+      color: var(--uv);
+      width: 30px;
+      height: 28px;
+    }
+    .logo-divider {
+      width: 1px;
+      height: 22px;
+      background: var(--border);
+    }
+
+    /* ── Bubble stats (playful overlap, semi-transparent) ── */
+    .bubble-stage {
+      position: relative;
+      margin-top: 28px;
+      height: 360px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    /* Inner fixed-width container so the bubble cluster is always centred,
+       regardless of card width. All bubble positions are relative to this. */
+    .bubble-inner {
+      position: relative;
+      width: 580px;
+      height: 100%;
+    }
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px;
+      color: white;
+      backdrop-filter: blur(4px);
+      box-shadow:
+        0 12px 40px rgba(99, 0, 255, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    .bubble .big-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .bubble .label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+      max-width: 90%;
+      margin-top: 8px;
+    }
+
+    /* 5 bubbles arranged in a centred cluster (~580px wide).
+       Overlaps are tuned so each bubble's content (big number + label) stays clear. */
+    .bubble.b1 { /* 156 exhibitors — Ultra Violet, anchor on left */
+      background: radial-gradient(circle at 35% 30%, rgba(150, 60, 255, 0.92), rgba(99, 0, 255, 0.88));
+      width: 190px; height: 190px;
+      top: 30px; left: 0px;
+      z-index: 3;
+    }
+    .bubble.b1 .big-num { font-size: 54px; }
+    .bubble.b1 .label { font-size: 12px; }
+
+    .bubble.b2 { /* 40 Health × AI — Electric Blue, small, top */
+      background: radial-gradient(circle at 35% 30%, rgba(80, 220, 255, 0.95), rgba(0, 181, 236, 0.88));
+      width: 130px; height: 130px;
+      top: 0px; left: 175px;
+      z-index: 4;
+    }
+    .bubble.b2 .big-num { font-size: 40px; }
+    .bubble.b2 .label { font-size: 10px; color: white; }
+
+    .bubble.b3 { /* 206 rounds — Coral, large, centre-right top */
+      background: radial-gradient(circle at 35% 30%, rgba(255, 130, 90, 0.94), rgba(255, 97, 49, 0.88));
+      width: 180px; height: 180px;
+      top: 30px; left: 270px;
+      z-index: 2;
+    }
+    .bubble.b3 .big-num { font-size: 50px; }
+    .bubble.b3 .label { font-size: 11px; }
+
+    .bubble.b4 { /* €168M raised — Deep Violet, bottom-left */
+      background: radial-gradient(circle at 35% 30%, rgba(180, 50, 160, 0.94), rgba(144, 28, 128, 0.88));
+      width: 155px; height: 155px;
+      top: 195px; left: 130px;
+      z-index: 5;
+    }
+    .bubble.b4 .big-num { font-size: 34px; }
+    .bubble.b4 .label { font-size: 11px; }
+
+    .bubble.b5 { /* €850M combined value — Electric Green, bottom-right */
+      background: radial-gradient(circle at 35% 30%, rgba(190, 255, 90, 0.95), rgba(153, 255, 0, 0.88));
+      width: 195px; height: 195px;
+      top: 165px; left: 380px;
+      z-index: 1;
+      color: var(--text);
+    }
+    .bubble.b5 .big-num { font-size: 48px; color: var(--text); }
+    .bubble.b5 .label { font-size: 12px; color: var(--text); }
+
+    @media (max-width: 700px) {
+      .card { padding: 24px 22px 20px; border-radius: 20px; }
+      .title { font-size: 21px; }
+      .bubble-stage { height: 360px; }
+      .bubble-inner { width: 340px; }
+      .bubble.b1 { width: 140px; height: 140px; top: 30px; left: 0px; }
+      .bubble.b1 .big-num { font-size: 40px; }
+      .bubble.b2 { width: 100px; height: 100px; top: 0px; left: 120px; }
+      .bubble.b2 .big-num { font-size: 30px; }
+      .bubble.b3 { width: 140px; height: 140px; top: 30px; left: 200px; }
+      .bubble.b3 .big-num { font-size: 38px; }
+      .bubble.b4 { width: 120px; height: 120px; top: 200px; left: 70px; }
+      .bubble.b4 .big-num { font-size: 26px; }
+      .bubble.b5 { width: 150px; height: 150px; top: 180px; left: 190px; }
+      .bubble.b5 .big-num { font-size: 36px; }
+    }
+
+    /* ── Investor leaderboard ──────────────────────────── */
+    .lb-list {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .lb-row {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      grid-template-rows: auto auto;
+      align-items: center;
+      gap: 14px;
+      row-gap: 6px;
+    }
+    .lb-rank {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .lb-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      min-width: 0;
+    }
+    .lb-bar-wrap {
+      grid-column: 2 / 4;
+      grid-row: 2;
+      position: relative;
+      height: 8px;
+      background: rgba(99, 0, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .lb-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      /* Gradient using 4YFN brand palette: UV → Coral */
+      background: linear-gradient(90deg, var(--uv) 0%, #B83DFF 50%, var(--coral) 100%);
+      border-radius: 4px;
+    }
+    .lb-count {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--uv);
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .lb-count .rounds-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-left: 4px;
+    }
+
+    /* ── Biorce spotlight ─────────────────────────────────── */
+    .spot-hero {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(99, 0, 255, 0.04) 0%, rgba(0, 181, 236, 0.06) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .spot-logo {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spot-logo img { width: 100%; height: auto; display: block; }
+    .spot-id { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .spot-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .spot-tagline {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: -0.005em;
+    }
+    .spot-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .spot-meta a {
+      color: var(--uv);
+      text-decoration: none;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 600;
+    }
+
+    .spot-stats {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .spot-stat {
+      padding: 16px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .spot-stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--uv);
+      line-height: 1;
+    }
+    .spot-stat-num.coral { color: var(--coral); }
+    .spot-stat-num.blue { color: var(--blue); }
+    .spot-stat-num.violet { color: var(--deep-violet); }
+    .spot-stat-num.with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .spot-stat-num .award-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .spot-stat.award {
+      background: linear-gradient(135deg, rgba(99, 0, 255, 0.06) 0%, rgba(255, 97, 49, 0.06) 100%);
+      border-color: rgba(99, 0, 255, 0.2);
+    }
+
+    .spot-stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .spot-stat-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .spot-about {
+      margin-top: 18px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      letter-spacing: -0.003em;
+    }
+    .spot-about strong { color: var(--text); font-weight: 700; }
+
+    .spot-backers {
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .spot-backers-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-right: 8px;
+    }
+    .spot-backers-list {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    @media (max-width: 700px) {
+      .spot-hero { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .spot-stats { grid-template-columns: repeat(2, 1fr); }
+      .spot-name { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="outer">
+
+  <header class="capsule-header">
+    <div class="capsule-eyebrow">Dealroom × 4YFN</div>
+    <h1 class="capsule-title">4YFN26 Spinouts data capsule</h1>
+    <button class="pdf-download-btn" id="pdfDownloadBtn" aria-label="Download all charts as PDF">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download PDF
+    </button>
+  </header>
+
+  <!-- Off-screen PDF cover (captured into the PDF, not visible on the page) -->
+  <div class="pdf-cover" id="pdfCover" aria-hidden="true">
+    <div class="pdf-cover-top">
+      <div class="pdf-cover-eyebrow">Dealroom × 4YFN</div>
+      <h1 class="pdf-cover-title">4YFN26 Spinouts<br/>data capsule</h1>
+      <div class="pdf-cover-sub">Global spinout VC trends, 4YFN26 Spinouts cohort highlights, and the most active investors backing them.</div>
+    </div>
+    <div class="pdf-cover-bottom">
+      <div class="pdf-cover-meta">2026 Edition · Source: Dealroom.co</div>
+      <div class="pdf-cover-logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="220" height="52" aria-label="Dealroom"><defs><style>.dr-w{fill:#fff;}</style></defs><g><g><path class="dr-w" d="M201.48,27.53a2.47,2.47,0,0,1,1.22.29,2.25,2.25,0,0,1,.87.75l2.8-2.94A5.37,5.37,0,0,0,204,24.2a8.89,8.89,0,0,0-2.56-.4,8.6,8.6,0,0,0-3,.5,7.15,7.15,0,0,0-2.44,1.46A6.79,6.79,0,0,0,194.44,28a7.63,7.63,0,0,0,0,5.93,6.89,6.89,0,0,0,1.62,2.27,7.31,7.31,0,0,0,2.44,1.46,8.6,8.6,0,0,0,3,.5,8.26,8.26,0,0,0,2.56-.41,5.35,5.35,0,0,0,2.33-1.42l-2.8-2.94a3.63,3.63,0,0,1-.87.74,2.26,2.26,0,0,1-1.22.3,3.22,3.22,0,0,1-2.5-1,3.53,3.53,0,0,1-.89-2.51,3.52,3.52,0,0,1,.89-2.5A3.22,3.22,0,0,1,201.48,27.53Z"/><path class="dr-w" d="M158.18,25.76a7.15,7.15,0,0,0-2.44-1.46,8.6,8.6,0,0,0-3-.5,8.69,8.69,0,0,0-3,.5,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,145.71,28a7.63,7.63,0,0,0,0,5.93,6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46h0a8.69,8.69,0,0,0,3,.5,8.6,8.6,0,0,0,3-.5,7.31,7.31,0,0,0,2.44-1.46A6.92,6.92,0,0,0,159.81,34a7.63,7.63,0,0,0,0-5.93A6.82,6.82,0,0,0,158.18,25.76Zm-2.91,7.75a3.76,3.76,0,0,1-5,0,3.56,3.56,0,0,1-.89-2.51,3.53,3.53,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0,3.53,3.53,0,0,1,.89,2.51A3.56,3.56,0,0,1,155.27,33.51Z"/><path class="dr-w" d="M141.46,25.76A7.31,7.31,0,0,0,139,24.3a9.16,9.16,0,0,0-6,0,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,129,28,7.75,7.75,0,0,0,129,34a6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46h0a9.16,9.16,0,0,0,6,0,7.31,7.31,0,0,0,2.44-1.46A7.07,7.07,0,0,0,143.09,34a7.75,7.75,0,0,0,0-5.93A7,7,0,0,0,141.46,25.76Zm-2.91,7.75a3.76,3.76,0,0,1-5,0,3.56,3.56,0,0,1-.89-2.51,3.48,3.48,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0,3.53,3.53,0,0,1,.89,2.51A3.56,3.56,0,0,1,138.55,33.51Z"/><path class="dr-w" d="M74.14,25.61h0a4,4,0,0,0-1.88-1.41,7.49,7.49,0,0,0-2.48-.4,5.58,5.58,0,0,0-2.63.6,6.19,6.19,0,0,0-2,1.63,7.32,7.32,0,0,0-1.24,2.32,8.9,8.9,0,0,0-.44,2.76A8.17,8.17,0,0,0,63.93,34,6.63,6.63,0,0,0,65.3,36.2a6.07,6.07,0,0,0,2.14,1.47h0a7.11,7.11,0,0,0,2.77.53,5,5,0,0,0,1.38-.2,6.46,6.46,0,0,0,1.21-.51,5.56,5.56,0,0,0,1-.7,4.66,4.66,0,0,0,.66-.74h0v1.81h3.9V16.51H74.14Zm-.56,7.89a3.74,3.74,0,0,1-5,0A3.53,3.53,0,0,1,67.69,31a3.56,3.56,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0A3.56,3.56,0,0,1,74.47,31,3.53,3.53,0,0,1,73.58,33.5Z"/><path class="dr-w" d="M221.55,28a6.82,6.82,0,0,0-1.63-2.27,7.31,7.31,0,0,0-2.44-1.46,8.6,8.6,0,0,0-3-.5,8.69,8.69,0,0,0-3,.5,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,207.45,28a7.75,7.75,0,0,0,0,5.93,6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46,8.69,8.69,0,0,0,3,.5,8.6,8.6,0,0,0,3-.5,7.31,7.31,0,0,0,2.44-1.46A6.92,6.92,0,0,0,221.55,34a7.63,7.63,0,0,0,0-5.93ZM217,33.51a3.76,3.76,0,0,1-5,0A3.56,3.56,0,0,1,211.1,31a3.53,3.53,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0A3.54,3.54,0,0,1,217.9,31,3.56,3.56,0,0,1,217,33.51Z"/><path class="dr-w" d="M93.17,25.76a5.56,5.56,0,0,0-2-1.45,6.66,6.66,0,0,0-2.68-.51,8.46,8.46,0,0,0-3,.51A7,7,0,0,0,83,25.76,6.78,6.78,0,0,0,81.41,28a7.75,7.75,0,0,0,0,5.93A6.78,6.78,0,0,0,83,36.23a7,7,0,0,0,2.43,1.46h0a8.58,8.58,0,0,0,3,.5,7.71,7.71,0,0,0,3.23-.71,6.7,6.7,0,0,0,2.57-2l-3-2.17A4.8,4.8,0,0,1,90,34.51a3.05,3.05,0,0,1-1.77.46,3.12,3.12,0,0,1-2.09-.71,3.32,3.32,0,0,1-1.1-1.94h9.85V31a9.08,9.08,0,0,0-.46-3A6.63,6.63,0,0,0,93.17,25.76Zm-8.11,3.68a2.66,2.66,0,0,1,.24-1,2.42,2.42,0,0,1,.6-.82,3,3,0,0,1,.91-.58h0a3.24,3.24,0,0,1,1.23-.23,2.51,2.51,0,0,1,1.9.77,2.45,2.45,0,0,1,.71,1.83Z"/><path class="dr-w" d="M108.19,25.64a4.47,4.47,0,0,0-1.92-1.37,8.68,8.68,0,0,0-3.07-.47,9.87,9.87,0,0,0-3.28.56A7.65,7.65,0,0,0,97.15,26l2.26,2.31a5.29,5.29,0,0,1,1.54-1.2,4.35,4.35,0,0,1,1.91-.44,2.91,2.91,0,0,1,1.91.67,2.23,2.23,0,0,1,.81,1.79l-1.91,0a20.62,20.62,0,0,0-2.07.17,13.6,13.6,0,0,0-2,.44,6,6,0,0,0-1.71.84A3.87,3.87,0,0,0,96.71,32a4.21,4.21,0,0,0-.44,2,4.15,4.15,0,0,0,.4,1.84,3.83,3.83,0,0,0,1.08,1.32,4.41,4.41,0,0,0,1.57.8h0a6.09,6.09,0,0,0,1.84.28,6.37,6.37,0,0,0,2.48-.48,4,4,0,0,0,1.88-1.58h.06v1.72h3.9v-7a14.61,14.61,0,0,0-.29-3A5.21,5.21,0,0,0,108.19,25.64Zm-2.61,7.1a2.23,2.23,0,0,1-1,1.92,3.45,3.45,0,0,1-1,.48,4.1,4.1,0,0,1-1.2.17A2.69,2.69,0,0,1,101,35a1.21,1.21,0,0,1-.65-1.13,1.35,1.35,0,0,1,.47-1.1,3,3,0,0,1,1.13-.6,6.43,6.43,0,0,1,1.38-.24h0c.49,0,.89,0,1.2,0h1Z"/><path class="dr-w" d="M191,33.58a2.6,2.6,0,0,0-.84-.55,2.73,2.73,0,0,0-1-.2,2.76,2.76,0,0,0-1,.2,2.5,2.5,0,0,0-1.38,1.38,2.54,2.54,0,0,0-.2,1,2.58,2.58,0,0,0,.2,1,2.41,2.41,0,0,0,.55.83,2.56,2.56,0,0,0,.83.55h0a2.67,2.67,0,0,0,1,.2,2.73,2.73,0,0,0,1-.2,2.6,2.6,0,0,0,.84-.55,2.73,2.73,0,0,0,.55-.83,2.76,2.76,0,0,0,.2-1,2.62,2.62,0,0,0-.75-1.85Z"/><rect class="dr-w" x="111.67" y="16.51" width="4.24" height="21.35"/><path class="dr-w" d="M182.91,25.54a3.7,3.7,0,0,0-1.5-1.27,5.34,5.34,0,0,0-2.33-.47,5.42,5.42,0,0,0-2.57.56,4.53,4.53,0,0,0-1.78,1.9,3.78,3.78,0,0,0-1.68-1.87,5.46,5.46,0,0,0-2.56-.59,4.87,4.87,0,0,0-1.42.2,5.18,5.18,0,0,0-1.16.51,3.71,3.71,0,0,0-.87.71,3.18,3.18,0,0,0-.57.79h-.06V24.14h-4.07V37.86h4.24V31a9.36,9.36,0,0,1,.09-1.3,3.4,3.4,0,0,1,.35-1.12,2,2,0,0,1,.78-.79,2.67,2.67,0,0,1,1.33-.29,1.67,1.67,0,0,1,1.12.33,2.05,2.05,0,0,1,.55.82,3.92,3.92,0,0,1,.2,1c0,.36,0,.66,0,.9v7.26h4.25V30.6a5.28,5.28,0,0,1,.12-1.19,2.77,2.77,0,0,1,.43-1,2,2,0,0,1,.79-.67,2.75,2.75,0,0,1,1.23-.23,1.56,1.56,0,0,1,1.46.68,3.32,3.32,0,0,1,.41,1.66v8h4.23v-8.1a10.65,10.65,0,0,0-.23-2.33A5.37,5.37,0,0,0,182.91,25.54Z"/><path class="dr-w" d="M126.69,23.79a4.07,4.07,0,0,0-2.35.64,5.21,5.21,0,0,0-1.62,1.9h0v-2.2h-4.24V37.86h4.24V32.12a12.9,12.9,0,0,1,.11-1.86,3.58,3.58,0,0,1,.5-1.45,2.48,2.48,0,0,1,1.08-.95,4.55,4.55,0,0,1,1.93-.34,5.62,5.62,0,0,1,.92.07,6.77,6.77,0,0,1,.89.21V23.94a3.87,3.87,0,0,0-.68-.12Z"/><path class="dr-w" d="M32.75,20.12H31v13h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72A4.66,4.66,0,0,0,32.75,20.12Z"/><path class="dr-w" d="M51.89,0H1.5A1.5,1.5,0,0,0,0,1.5V51.77a1.51,1.51,0,0,0,1.51,1.51H51.88a1.52,1.52,0,0,0,1.51-1.51V1.5A1.5,1.5,0,0,0,51.89,0ZM15.36,38.2H9.15V27.55h6.21Zm7.81,0H17v-17h6.21Zm18-3.14q-3.18,3.13-9,3.14H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23C44.32,30,43.26,33,41.13,35.06Z"/></g></g></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Off-screen PDF back cover (captured as the last page of the PDF) -->
+  <div class="pdf-cover pdf-back-cover" id="pdfBackCover" aria-hidden="true">
+    <div class="pdf-cover-top pdf-back-stack">
+      <div class="pdf-cover-eyebrow">Save the date</div>
+      <h1 class="pdf-cover-title">4YFN27</h1>
+      <div class="pdf-back-date">1–4 March 2027 · Barcelona</div>
+      <div class="pdf-cover-sub">Join us where deals flow, startups scale and ambition becomes action.</div>
+    </div>
+    <div class="pdf-cover-bottom" style="justify-content: center;">
+      <div class="pdf-cover-logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="220" height="52" aria-label="Dealroom"><defs><style>.dr-w{fill:#fff;}</style></defs><g><g><path class="dr-w" d="M201.48,27.53a2.47,2.47,0,0,1,1.22.29,2.25,2.25,0,0,1,.87.75l2.8-2.94A5.37,5.37,0,0,0,204,24.2a8.89,8.89,0,0,0-2.56-.4,8.6,8.6,0,0,0-3,.5,7.15,7.15,0,0,0-2.44,1.46A6.79,6.79,0,0,0,194.44,28a7.63,7.63,0,0,0,0,5.93,6.89,6.89,0,0,0,1.62,2.27,7.31,7.31,0,0,0,2.44,1.46,8.6,8.6,0,0,0,3,.5,8.26,8.26,0,0,0,2.56-.41,5.35,5.35,0,0,0,2.33-1.42l-2.8-2.94a3.63,3.63,0,0,1-.87.74,2.26,2.26,0,0,1-1.22.3,3.22,3.22,0,0,1-2.5-1,3.53,3.53,0,0,1-.89-2.51,3.52,3.52,0,0,1,.89-2.5A3.22,3.22,0,0,1,201.48,27.53Z"/><path class="dr-w" d="M158.18,25.76a7.15,7.15,0,0,0-2.44-1.46,8.6,8.6,0,0,0-3-.5,8.69,8.69,0,0,0-3,.5,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,145.71,28a7.63,7.63,0,0,0,0,5.93,6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46h0a8.69,8.69,0,0,0,3,.5,8.6,8.6,0,0,0,3-.5,7.31,7.31,0,0,0,2.44-1.46A6.92,6.92,0,0,0,159.81,34a7.63,7.63,0,0,0,0-5.93A6.82,6.82,0,0,0,158.18,25.76Zm-2.91,7.75a3.76,3.76,0,0,1-5,0,3.56,3.56,0,0,1-.89-2.51,3.53,3.53,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0,3.53,3.53,0,0,1,.89,2.51A3.56,3.56,0,0,1,155.27,33.51Z"/><path class="dr-w" d="M141.46,25.76A7.31,7.31,0,0,0,139,24.3a9.16,9.16,0,0,0-6,0,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,129,28,7.75,7.75,0,0,0,129,34a6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46h0a9.16,9.16,0,0,0,6,0,7.31,7.31,0,0,0,2.44-1.46A7.07,7.07,0,0,0,143.09,34a7.75,7.75,0,0,0,0-5.93A7,7,0,0,0,141.46,25.76Zm-2.91,7.75a3.76,3.76,0,0,1-5,0,3.56,3.56,0,0,1-.89-2.51,3.48,3.48,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0,3.53,3.53,0,0,1,.89,2.51A3.56,3.56,0,0,1,138.55,33.51Z"/><path class="dr-w" d="M74.14,25.61h0a4,4,0,0,0-1.88-1.41,7.49,7.49,0,0,0-2.48-.4,5.58,5.58,0,0,0-2.63.6,6.19,6.19,0,0,0-2,1.63,7.32,7.32,0,0,0-1.24,2.32,8.9,8.9,0,0,0-.44,2.76A8.17,8.17,0,0,0,63.93,34,6.63,6.63,0,0,0,65.3,36.2a6.07,6.07,0,0,0,2.14,1.47h0a7.11,7.11,0,0,0,2.77.53,5,5,0,0,0,1.38-.2,6.46,6.46,0,0,0,1.21-.51,5.56,5.56,0,0,0,1-.7,4.66,4.66,0,0,0,.66-.74h0v1.81h3.9V16.51H74.14Zm-.56,7.89a3.74,3.74,0,0,1-5,0A3.53,3.53,0,0,1,67.69,31a3.56,3.56,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0A3.56,3.56,0,0,1,74.47,31,3.53,3.53,0,0,1,73.58,33.5Z"/><path class="dr-w" d="M221.55,28a6.82,6.82,0,0,0-1.63-2.27,7.31,7.31,0,0,0-2.44-1.46,8.6,8.6,0,0,0-3-.5,8.69,8.69,0,0,0-3,.5,7.17,7.17,0,0,0-2.43,1.46A6.68,6.68,0,0,0,207.45,28a7.75,7.75,0,0,0,0,5.93,6.78,6.78,0,0,0,1.63,2.27,7.17,7.17,0,0,0,2.43,1.46,8.69,8.69,0,0,0,3,.5,8.6,8.6,0,0,0,3-.5,7.31,7.31,0,0,0,2.44-1.46A6.92,6.92,0,0,0,221.55,34a7.63,7.63,0,0,0,0-5.93ZM217,33.51a3.76,3.76,0,0,1-5,0A3.56,3.56,0,0,1,211.1,31a3.53,3.53,0,0,1,.89-2.51h0a3.76,3.76,0,0,1,5,0A3.54,3.54,0,0,1,217.9,31,3.56,3.56,0,0,1,217,33.51Z"/><path class="dr-w" d="M93.17,25.76a5.56,5.56,0,0,0-2-1.45,6.66,6.66,0,0,0-2.68-.51,8.46,8.46,0,0,0-3,.51A7,7,0,0,0,83,25.76,6.78,6.78,0,0,0,81.41,28a7.75,7.75,0,0,0,0,5.93A6.78,6.78,0,0,0,83,36.23a7,7,0,0,0,2.43,1.46h0a8.58,8.58,0,0,0,3,.5,7.71,7.71,0,0,0,3.23-.71,6.7,6.7,0,0,0,2.57-2l-3-2.17A4.8,4.8,0,0,1,90,34.51a3.05,3.05,0,0,1-1.77.46,3.12,3.12,0,0,1-2.09-.71,3.32,3.32,0,0,1-1.1-1.94h9.85V31a9.08,9.08,0,0,0-.46-3A6.63,6.63,0,0,0,93.17,25.76Zm-8.11,3.68a2.66,2.66,0,0,1,.24-1,2.42,2.42,0,0,1,.6-.82,3,3,0,0,1,.91-.58h0a3.24,3.24,0,0,1,1.23-.23,2.51,2.51,0,0,1,1.9.77,2.45,2.45,0,0,1,.71,1.83Z"/><path class="dr-w" d="M108.19,25.64a4.47,4.47,0,0,0-1.92-1.37,8.68,8.68,0,0,0-3.07-.47,9.87,9.87,0,0,0-3.28.56A7.65,7.65,0,0,0,97.15,26l2.26,2.31a5.29,5.29,0,0,1,1.54-1.2,4.35,4.35,0,0,1,1.91-.44,2.91,2.91,0,0,1,1.91.67,2.23,2.23,0,0,1,.81,1.79l-1.91,0a20.62,20.62,0,0,0-2.07.17,13.6,13.6,0,0,0-2,.44,6,6,0,0,0-1.71.84A3.87,3.87,0,0,0,96.71,32a4.21,4.21,0,0,0-.44,2,4.15,4.15,0,0,0,.4,1.84,3.83,3.83,0,0,0,1.08,1.32,4.41,4.41,0,0,0,1.57.8h0a6.09,6.09,0,0,0,1.84.28,6.37,6.37,0,0,0,2.48-.48,4,4,0,0,0,1.88-1.58h.06v1.72h3.9v-7a14.61,14.61,0,0,0-.29-3A5.21,5.21,0,0,0,108.19,25.64Zm-2.61,7.1a2.23,2.23,0,0,1-1,1.92,3.45,3.45,0,0,1-1,.48,4.1,4.1,0,0,1-1.2.17A2.69,2.69,0,0,1,101,35a1.21,1.21,0,0,1-.65-1.13,1.35,1.35,0,0,1,.47-1.1,3,3,0,0,1,1.13-.6,6.43,6.43,0,0,1,1.38-.24h0c.49,0,.89,0,1.2,0h1Z"/><path class="dr-w" d="M191,33.58a2.6,2.6,0,0,0-.84-.55,2.73,2.73,0,0,0-1-.2,2.76,2.76,0,0,0-1,.2,2.5,2.5,0,0,0-1.38,1.38,2.54,2.54,0,0,0-.2,1,2.58,2.58,0,0,0,.2,1,2.41,2.41,0,0,0,.55.83,2.56,2.56,0,0,0,.83.55h0a2.67,2.67,0,0,0,1,.2,2.73,2.73,0,0,0,1-.2,2.6,2.6,0,0,0,.84-.55,2.73,2.73,0,0,0,.55-.83,2.76,2.76,0,0,0,.2-1,2.62,2.62,0,0,0-.75-1.85Z"/><rect class="dr-w" x="111.67" y="16.51" width="4.24" height="21.35"/><path class="dr-w" d="M182.91,25.54a3.7,3.7,0,0,0-1.5-1.27,5.34,5.34,0,0,0-2.33-.47,5.42,5.42,0,0,0-2.57.56,4.53,4.53,0,0,0-1.78,1.9,3.78,3.78,0,0,0-1.68-1.87,5.46,5.46,0,0,0-2.56-.59,4.87,4.87,0,0,0-1.42.2,5.18,5.18,0,0,0-1.16.51,3.71,3.71,0,0,0-.87.71,3.18,3.18,0,0,0-.57.79h-.06V24.14h-4.07V37.86h4.24V31a9.36,9.36,0,0,1,.09-1.3,3.4,3.4,0,0,1,.35-1.12,2,2,0,0,1,.78-.79,2.67,2.67,0,0,1,1.33-.29,1.67,1.67,0,0,1,1.12.33,2.05,2.05,0,0,1,.55.82,3.92,3.92,0,0,1,.2,1c0,.36,0,.66,0,.9v7.26h4.25V30.6a5.28,5.28,0,0,1,.12-1.19,2.77,2.77,0,0,1,.43-1,2,2,0,0,1,.79-.67,2.75,2.75,0,0,1,1.23-.23,1.56,1.56,0,0,1,1.46.68,3.32,3.32,0,0,1,.41,1.66v8h4.23v-8.1a10.65,10.65,0,0,0-.23-2.33A5.37,5.37,0,0,0,182.91,25.54Z"/><path class="dr-w" d="M126.69,23.79a4.07,4.07,0,0,0-2.35.64,5.21,5.21,0,0,0-1.62,1.9h0v-2.2h-4.24V37.86h4.24V32.12a12.9,12.9,0,0,1,.11-1.86,3.58,3.58,0,0,1,.5-1.45,2.48,2.48,0,0,1,1.08-.95,4.55,4.55,0,0,1,1.93-.34,5.62,5.62,0,0,1,.92.07,6.77,6.77,0,0,1,.89.21V23.94a3.87,3.87,0,0,0-.68-.12Z"/><path class="dr-w" d="M32.75,20.12H31v13h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72A4.66,4.66,0,0,0,32.75,20.12Z"/><path class="dr-w" d="M51.89,0H1.5A1.5,1.5,0,0,0,0,1.5V51.77a1.51,1.51,0,0,0,1.51,1.51H51.88a1.52,1.52,0,0,0,1.51-1.51V1.5A1.5,1.5,0,0,0,51.89,0ZM15.36,38.2H9.15V27.55h6.21Zm7.81,0H17v-17h6.21Zm18-3.14q-3.18,3.13-9,3.14H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23C44.32,30,43.26,33,41.13,35.06Z"/></g></g></svg>
+      </div>
+    </div>
+    <div class="pdf-back-sites" style="align-self: center;">
+      4yfn.com<span>·</span>dealroom.co
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       CHART 1: Global Spinouts VC with 2026 projection
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <h1 class="title">Global Spinout VC on track to $68.1B in 2026</h1>
+    <div class="subtitle">Annual venture capital invested in spinout companies worldwide, with 2026 figures annualised from year-to-date</div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-bar" style="background:#6300FF"></span><span>Actual</span></div>
+      <div class="legend-item"><span class="legend-bar" style="background:#C9A3FF"></span><span>2026 projected (annualised from YTD)</span></div>
+    </div>
+
+    <div class="chart-wrap" style="height: 360px;">
+      <canvas id="chart1"></canvas>
+    </div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="110" height="26"><defs><style>.cls-1{fill:#001234;}.cls-2{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path id="Union_2" data-name="Union 2" class="cls-1" d="M211.51,37.69a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,207.45,34a7.75,7.75,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.31,7.31,0,0,1,2.44,1.46A6.82,6.82,0,0,1,221.55,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5A8.69,8.69,0,0,1,211.51,37.69Zm.48-9.2A3.53,3.53,0,0,0,211.1,31a3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0A3.56,3.56,0,0,0,217.9,31a3.54,3.54,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-13.49,9.2a7.31,7.31,0,0,1-2.44-1.46A6.89,6.89,0,0,1,194.44,34a7.63,7.63,0,0,1,0-5.93,6.79,6.79,0,0,1,1.62-2.27,7.15,7.15,0,0,1,2.44-1.46,8.6,8.6,0,0,1,3-.5,8.89,8.89,0,0,1,2.56.4,5.37,5.37,0,0,1,2.33,1.43l-2.8,2.94a2.25,2.25,0,0,0-.87-.75,2.47,2.47,0,0,0-1.22-.29,3.22,3.22,0,0,0-2.5,1,3.52,3.52,0,0,0-.89,2.5A3.53,3.53,0,0,0,199,33.5a3.22,3.22,0,0,0,2.5,1,2.26,2.26,0,0,0,1.22-.3,3.63,3.63,0,0,0,.87-.74l2.8,2.94A5.35,5.35,0,0,1,204,37.78a8.26,8.26,0,0,1-2.56.41A8.6,8.6,0,0,1,198.5,37.69Zm-48.73,0a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,145.71,34a7.63,7.63,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.15,7.15,0,0,1,2.44,1.46A6.82,6.82,0,0,1,159.81,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5,8.69,8.69,0,0,1-3-.5Zm.48-9.2a3.53,3.53,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-17.2,9.2a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,129,34,7.75,7.75,0,0,1,129,28a6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,9.16,9.16,0,0,1,6,0,7.31,7.31,0,0,1,2.44,1.46A7,7,0,0,1,143.09,28a7.75,7.75,0,0,1,0,5.93,7.07,7.07,0,0,1-1.63,2.27A7.31,7.31,0,0,1,139,37.69a9.16,9.16,0,0,1-6,0Zm.48-9.2a3.48,3.48,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0ZM99.32,37.92a4.41,4.41,0,0,1-1.57-.8,3.83,3.83,0,0,1-1.08-1.32,4.15,4.15,0,0,1-.4-1.84,4.21,4.21,0,0,1,.44-2,3.87,3.87,0,0,1,1.19-1.35,6,6,0,0,1,1.71-.84,13.6,13.6,0,0,1,2-.44,20.62,20.62,0,0,1,2.07-.17l1.91,0a2.23,2.23,0,0,0-.81-1.79,2.91,2.91,0,0,0-1.91-.67,4.35,4.35,0,0,0-1.91.44,5.29,5.29,0,0,0-1.54,1.2L97.15,26a7.65,7.65,0,0,1,2.77-1.65,9.87,9.87,0,0,1,3.28-.56,8.68,8.68,0,0,1,3.07.47,4.47,4.47,0,0,1,1.92,1.37,5.21,5.21,0,0,1,1,2.22,14.61,14.61,0,0,1,.29,3v7h-3.9V36.14h-.06a4,4,0,0,1-1.88,1.58,6.37,6.37,0,0,1-2.48.48,6.09,6.09,0,0,1-1.84-.28Zm4-6a6.43,6.43,0,0,0-1.38.24,3,3,0,0,0-1.13.6,1.35,1.35,0,0,0-.47,1.1A1.21,1.21,0,0,0,101,35a2.69,2.69,0,0,0,1.36.36,4.1,4.1,0,0,0,1.2-.17,3.45,3.45,0,0,0,1-.48,2.23,2.23,0,0,0,1-1.92v-.9h-1c-.31,0-.71,0-1.2,0ZM85.47,37.69A7,7,0,0,1,83,36.23,6.78,6.78,0,0,1,81.41,34a7.75,7.75,0,0,1,0-5.93A6.78,6.78,0,0,1,83,25.76a7,7,0,0,1,2.43-1.45,8.46,8.46,0,0,1,3-.51,6.66,6.66,0,0,1,2.68.51,5.56,5.56,0,0,1,2,1.45A6.63,6.63,0,0,1,94.45,28a9.08,9.08,0,0,1,.46,3v1.32H85.06a3.32,3.32,0,0,0,1.1,1.94,3.12,3.12,0,0,0,2.09.71A3.05,3.05,0,0,0,90,34.51a4.8,4.8,0,0,0,1.26-1.2l3,2.17a6.7,6.7,0,0,1-2.57,2,7.71,7.71,0,0,1-3.23.71,8.58,8.58,0,0,1-3-.5Zm1.34-10.62a3,3,0,0,0-.91.58,2.42,2.42,0,0,0-.6.82,2.66,2.66,0,0,0-.24,1h5.6A2.45,2.45,0,0,0,90,27.61a2.51,2.51,0,0,0-1.9-.77,3.24,3.24,0,0,0-1.23.23ZM67.44,37.67A6.07,6.07,0,0,1,65.3,36.2,6.63,6.63,0,0,1,63.93,34a8.17,8.17,0,0,1-.48-2.85,8.9,8.9,0,0,1,.44-2.76A7.32,7.32,0,0,1,65.13,26a6.19,6.19,0,0,1,2-1.63,5.58,5.58,0,0,1,2.63-.6,7.49,7.49,0,0,1,2.48.4,4,4,0,0,1,1.88,1.41h0v-9.1h4.24V37.86h-3.9V36.05h0a4.66,4.66,0,0,1-.66.74,5.56,5.56,0,0,1-1,.7,6.46,6.46,0,0,1-1.21.51,5,5,0,0,1-1.38.2,7.11,7.11,0,0,1-2.77-.53Zm1.14-9.19A3.56,3.56,0,0,0,67.69,31a3.53,3.53,0,0,0,.89,2.51,3.74,3.74,0,0,0,5,0A3.53,3.53,0,0,0,74.47,31a3.56,3.56,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm119.51,9.35a2.56,2.56,0,0,1-.83-.55,2.41,2.41,0,0,1-.55-.83,2.58,2.58,0,0,1-.2-1,2.54,2.54,0,0,1,.2-1A2.5,2.5,0,0,1,188.09,33a2.76,2.76,0,0,1,1-.2,2.73,2.73,0,0,1,1,.2,2.6,2.6,0,0,1,.84.55,2.62,2.62,0,0,1,.75,1.85,2.76,2.76,0,0,1-.2,1,2.73,2.73,0,0,1-.55.83,2.6,2.6,0,0,1-.84.55,2.73,2.73,0,0,1-1,.2,2.67,2.67,0,0,1-1-.2Zm-8.38,0v-8a3.32,3.32,0,0,0-.41-1.66,1.56,1.56,0,0,0-1.46-.68,2.75,2.75,0,0,0-1.23.23,2,2,0,0,0-.79.67,2.77,2.77,0,0,0-.43,1,5.28,5.28,0,0,0-.12,1.19v7.26H171V30.6c0-.24,0-.54,0-.9a3.92,3.92,0,0,0-.2-1,2.05,2.05,0,0,0-.55-.82,1.67,1.67,0,0,0-1.12-.33,2.67,2.67,0,0,0-1.33.29,2,2,0,0,0-.78.79,3.4,3.4,0,0,0-.35,1.12,9.36,9.36,0,0,0-.09,1.3v6.83h-4.24V24.14h4.07V26h.06a3.18,3.18,0,0,1,.57-.79,3.71,3.71,0,0,1,.87-.71,5.18,5.18,0,0,1,1.16-.51,4.87,4.87,0,0,1,1.42-.2,5.46,5.46,0,0,1,2.56.59,3.78,3.78,0,0,1,1.68,1.87,4.53,4.53,0,0,1,1.78-1.9,5.42,5.42,0,0,1,2.57-.56,5.34,5.34,0,0,1,2.33.47,3.7,3.7,0,0,1,1.5,1.27,5.37,5.37,0,0,1,.8,1.89,10.65,10.65,0,0,1,.23,2.33v8.1Zm-61.28,0V24.13h4.24v2.2h0a5.21,5.21,0,0,1,1.62-1.9,4.07,4.07,0,0,1,2.35-.64l.73,0a3.87,3.87,0,0,1,.68.12V27.8a6.77,6.77,0,0,0-.89-.21,5.62,5.62,0,0,0-.92-.07,4.55,4.55,0,0,0-1.93.34,2.48,2.48,0,0,0-1.08.95,3.58,3.58,0,0,0-.5,1.45,12.9,12.9,0,0,0-.11,1.86v5.73Zm-6.76,0V16.51h4.24V37.86Z"/><path id="square" class="cls-1" d="M1.5,0H51.89a1.5,1.5,0,0,1,1.5,1.5V51.77a1.52,1.52,0,0,1-1.51,1.51H1.51A1.51,1.51,0,0,1,0,51.77H0V1.5A1.5,1.5,0,0,1,1.5,0Z"/><path id="Union_1" data-name="Union 1" class="cls-2" d="M17,38.2v-17h6.21v17Zm14,0H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23c0,3.85-1.06,6.83-3.19,8.91s-5.11,3.13-9,3.14ZM31,33.07h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72,4.66,4.66,0,0,0-3.82-1.53H31ZM9.15,38.2V27.55h6.21V38.2Z"/></g></g></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       CHART 2: AI share over time
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <h1 class="title">AI share of Spinout VC has surged from 5% to a projected 50% in 2026</h1>
+    <div class="subtitle">AI-enabled spinout companies' share of global spinout venture capital funding</div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-bar" style="background:linear-gradient(90deg, #6300FF, #FF6131)"></span><span>AI share of Spinout VC</span></div>
+    </div>
+
+    <div class="chart-wrap" style="height: 360px;">
+      <canvas id="chart2"></canvas>
+    </div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="110" height="26"><defs><style>.cls-1{fill:#001234;}.cls-2{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M211.51,37.69a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,207.45,34a7.75,7.75,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.31,7.31,0,0,1,2.44,1.46A6.82,6.82,0,0,1,221.55,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5A8.69,8.69,0,0,1,211.51,37.69Zm.48-9.2A3.53,3.53,0,0,0,211.1,31a3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0A3.56,3.56,0,0,0,217.9,31a3.54,3.54,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-13.49,9.2a7.31,7.31,0,0,1-2.44-1.46A6.89,6.89,0,0,1,194.44,34a7.63,7.63,0,0,1,0-5.93,6.79,6.79,0,0,1,1.62-2.27,7.15,7.15,0,0,1,2.44-1.46,8.6,8.6,0,0,1,3-.5,8.89,8.89,0,0,1,2.56.4,5.37,5.37,0,0,1,2.33,1.43l-2.8,2.94a2.25,2.25,0,0,0-.87-.75,2.47,2.47,0,0,0-1.22-.29,3.22,3.22,0,0,0-2.5,1,3.52,3.52,0,0,0-.89,2.5A3.53,3.53,0,0,0,199,33.5a3.22,3.22,0,0,0,2.5,1,2.26,2.26,0,0,0,1.22-.3,3.63,3.63,0,0,0,.87-.74l2.8,2.94A5.35,5.35,0,0,1,204,37.78a8.26,8.26,0,0,1-2.56.41A8.6,8.6,0,0,1,198.5,37.69Zm-48.73,0a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,145.71,34a7.63,7.63,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.15,7.15,0,0,1,2.44,1.46A6.82,6.82,0,0,1,159.81,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5,8.69,8.69,0,0,1-3-.5Zm.48-9.2a3.53,3.53,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-17.2,9.2a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,129,34,7.75,7.75,0,0,1,129,28a6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,9.16,9.16,0,0,1,6,0,7.31,7.31,0,0,1,2.44,1.46A7,7,0,0,1,143.09,28a7.75,7.75,0,0,1,0,5.93,7.07,7.07,0,0,1-1.63,2.27A7.31,7.31,0,0,1,139,37.69a9.16,9.16,0,0,1-6,0Zm.48-9.2a3.48,3.48,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0ZM99.32,37.92a4.41,4.41,0,0,1-1.57-.8,3.83,3.83,0,0,1-1.08-1.32,4.15,4.15,0,0,1-.4-1.84,4.21,4.21,0,0,1,.44-2,3.87,3.87,0,0,1,1.19-1.35,6,6,0,0,1,1.71-.84,13.6,13.6,0,0,1,2-.44,20.62,20.62,0,0,1,2.07-.17l1.91,0a2.23,2.23,0,0,0-.81-1.79,2.91,2.91,0,0,0-1.91-.67,4.35,4.35,0,0,0-1.91.44,5.29,5.29,0,0,0-1.54,1.2L97.15,26a7.65,7.65,0,0,1,2.77-1.65,9.87,9.87,0,0,1,3.28-.56,8.68,8.68,0,0,1,3.07.47,4.47,4.47,0,0,1,1.92,1.37,5.21,5.21,0,0,1,1,2.22,14.61,14.61,0,0,1,.29,3v7h-3.9V36.14h-.06a4,4,0,0,1-1.88,1.58,6.37,6.37,0,0,1-2.48.48,6.09,6.09,0,0,1-1.84-.28Zm4-6a6.43,6.43,0,0,0-1.38.24,3,3,0,0,0-1.13.6,1.35,1.35,0,0,0-.47,1.1A1.21,1.21,0,0,0,101,35a2.69,2.69,0,0,0,1.36.36,4.1,4.1,0,0,0,1.2-.17,3.45,3.45,0,0,0,1-.48,2.23,2.23,0,0,0,1-1.92v-.9h-1c-.31,0-.71,0-1.2,0ZM85.47,37.69A7,7,0,0,1,83,36.23,6.78,6.78,0,0,1,81.41,34a7.75,7.75,0,0,1,0-5.93A6.78,6.78,0,0,1,83,25.76a7,7,0,0,1,2.43-1.45,8.46,8.46,0,0,1,3-.51,6.66,6.66,0,0,1,2.68.51,5.56,5.56,0,0,1,2,1.45A6.63,6.63,0,0,1,94.45,28a9.08,9.08,0,0,1,.46,3v1.32H85.06a3.32,3.32,0,0,0,1.1,1.94,3.12,3.12,0,0,0,2.09.71A3.05,3.05,0,0,0,90,34.51a4.8,4.8,0,0,0,1.26-1.2l3,2.17a6.7,6.7,0,0,1-2.57,2,7.71,7.71,0,0,1-3.23.71,8.58,8.58,0,0,1-3-.5Zm1.34-10.62a3,3,0,0,0-.91.58,2.42,2.42,0,0,0-.6.82,2.66,2.66,0,0,0-.24,1h5.6A2.45,2.45,0,0,0,90,27.61a2.51,2.51,0,0,0-1.9-.77,3.24,3.24,0,0,0-1.23.23ZM67.44,37.67A6.07,6.07,0,0,1,65.3,36.2,6.63,6.63,0,0,1,63.93,34a8.17,8.17,0,0,1-.48-2.85,8.9,8.9,0,0,1,.44-2.76A7.32,7.32,0,0,1,65.13,26a6.19,6.19,0,0,1,2-1.63,5.58,5.58,0,0,1,2.63-.6,7.49,7.49,0,0,1,2.48.4,4,4,0,0,1,1.88,1.41h0v-9.1h4.24V37.86h-3.9V36.05h0a4.66,4.66,0,0,1-.66.74,5.56,5.56,0,0,1-1,.7,6.46,6.46,0,0,1-1.21.51,5,5,0,0,1-1.38.2,7.11,7.11,0,0,1-2.77-.53Zm1.14-9.19A3.56,3.56,0,0,0,67.69,31a3.53,3.53,0,0,0,.89,2.51,3.74,3.74,0,0,0,5,0A3.53,3.53,0,0,0,74.47,31a3.56,3.56,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm119.51,9.35a2.56,2.56,0,0,1-.83-.55,2.41,2.41,0,0,1-.55-.83,2.58,2.58,0,0,1-.2-1,2.54,2.54,0,0,1,.2-1A2.5,2.5,0,0,1,188.09,33a2.76,2.76,0,0,1,1-.2,2.73,2.73,0,0,1,1,.2,2.6,2.6,0,0,1,.84.55,2.62,2.62,0,0,1,.75,1.85,2.76,2.76,0,0,1-.2,1,2.73,2.73,0,0,1-.55.83,2.6,2.6,0,0,1-.84.55,2.73,2.73,0,0,1-1,.2,2.67,2.67,0,0,1-1-.2Zm-8.38,0v-8a3.32,3.32,0,0,0-.41-1.66,1.56,1.56,0,0,0-1.46-.68,2.75,2.75,0,0,0-1.23.23,2,2,0,0,0-.79.67,2.77,2.77,0,0,0-.43,1,5.28,5.28,0,0,0-.12,1.19v7.26H171V30.6c0-.24,0-.54,0-.9a3.92,3.92,0,0,0-.2-1,2.05,2.05,0,0,0-.55-.82,1.67,1.67,0,0,0-1.12-.33,2.67,2.67,0,0,0-1.33.29,2,2,0,0,0-.78.79,3.4,3.4,0,0,0-.35,1.12,9.36,9.36,0,0,0-.09,1.3v6.83h-4.24V24.14h4.07V26h.06a3.18,3.18,0,0,1,.57-.79,3.71,3.71,0,0,1,.87-.71,5.18,5.18,0,0,1,1.16-.51,4.87,4.87,0,0,1,1.42-.2,5.46,5.46,0,0,1,2.56.59,3.78,3.78,0,0,1,1.68,1.87,4.53,4.53,0,0,1,1.78-1.9,5.42,5.42,0,0,1,2.57-.56,5.34,5.34,0,0,1,2.33.47,3.7,3.7,0,0,1,1.5,1.27,5.37,5.37,0,0,1,.8,1.89,10.65,10.65,0,0,1,.23,2.33v8.1Zm-61.28,0V24.13h4.24v2.2h0a5.21,5.21,0,0,1,1.62-1.9,4.07,4.07,0,0,1,2.35-.64l.73,0a3.87,3.87,0,0,1,.68.12V27.8a6.77,6.77,0,0,0-.89-.21,5.62,5.62,0,0,0-.92-.07,4.55,4.55,0,0,0-1.93.34,2.48,2.48,0,0,0-1.08.95,3.58,3.58,0,0,0-.5,1.45,12.9,12.9,0,0,0-.11,1.86v5.73Zm-6.76,0V16.51h4.24V37.86Z"/><path d="M1.5,0H51.89a1.5,1.5,0,0,1,1.5,1.5V51.77a1.52,1.52,0,0,1-1.51,1.51H1.51A1.51,1.51,0,0,1,0,51.77H0V1.5A1.5,1.5,0,0,1,1.5,0Z"/><path class="cls-2" d="M17,38.2v-17h6.21v17Zm14,0H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23c0,3.85-1.06,6.83-3.19,8.91s-5.11,3.13-9,3.14ZM31,33.07h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72,4.66,4.66,0,0,0-3.82-1.53H31ZM9.15,38.2V27.55h6.21V38.2Z"/></g></g></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       CHART 3: Playful overlapping semi-transparent bubble stats
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <h1 class="title">4YFN26 Spinouts at a glance</h1>
+    <div class="subtitle">Exhibitor and funding snapshot of the 4YFN26 Spinouts cohort</div>
+
+    <div class="bubble-stage">
+      <div class="bubble-inner">
+        <div class="bubble b1">
+          <div class="big-num">87</div>
+          <div class="label">Spinout<br/>exhibitors</div>
+        </div>
+        <div class="bubble b2">
+          <div class="big-num">25</div>
+          <div class="label">Spinouts × AI</div>
+        </div>
+        <div class="bubble b3">
+          <div class="big-num">356</div>
+          <div class="label">Funding<br/>rounds</div>
+        </div>
+        <div class="bubble b4">
+          <div class="big-num">$464M</div>
+          <div class="label">VC raised</div>
+        </div>
+        <div class="bubble b5">
+          <div class="big-num">$25.0B</div>
+          <div class="label">Combined<br/>value</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="110" height="26"><defs><style>.cls-1{fill:#001234;}.cls-2{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M211.51,37.69a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,207.45,34a7.75,7.75,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.31,7.31,0,0,1,2.44,1.46A6.82,6.82,0,0,1,221.55,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5A8.69,8.69,0,0,1,211.51,37.69Zm.48-9.2A3.53,3.53,0,0,0,211.1,31a3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0A3.56,3.56,0,0,0,217.9,31a3.54,3.54,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-13.49,9.2a7.31,7.31,0,0,1-2.44-1.46A6.89,6.89,0,0,1,194.44,34a7.63,7.63,0,0,1,0-5.93,6.79,6.79,0,0,1,1.62-2.27,7.15,7.15,0,0,1,2.44-1.46,8.6,8.6,0,0,1,3-.5,8.89,8.89,0,0,1,2.56.4,5.37,5.37,0,0,1,2.33,1.43l-2.8,2.94a2.25,2.25,0,0,0-.87-.75,2.47,2.47,0,0,0-1.22-.29,3.22,3.22,0,0,0-2.5,1,3.52,3.52,0,0,0-.89,2.5A3.53,3.53,0,0,0,199,33.5a3.22,3.22,0,0,0,2.5,1,2.26,2.26,0,0,0,1.22-.3,3.63,3.63,0,0,0,.87-.74l2.8,2.94A5.35,5.35,0,0,1,204,37.78a8.26,8.26,0,0,1-2.56.41A8.6,8.6,0,0,1,198.5,37.69Zm-48.73,0a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,145.71,34a7.63,7.63,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.15,7.15,0,0,1,2.44,1.46A6.82,6.82,0,0,1,159.81,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5,8.69,8.69,0,0,1-3-.5Zm.48-9.2a3.53,3.53,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-17.2,9.2a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,129,34,7.75,7.75,0,0,1,129,28a6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,9.16,9.16,0,0,1,6,0,7.31,7.31,0,0,1,2.44,1.46A7,7,0,0,1,143.09,28a7.75,7.75,0,0,1,0,5.93,7.07,7.07,0,0,1-1.63,2.27A7.31,7.31,0,0,1,139,37.69a9.16,9.16,0,0,1-6,0Zm.48-9.2a3.48,3.48,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0ZM99.32,37.92a4.41,4.41,0,0,1-1.57-.8,3.83,3.83,0,0,1-1.08-1.32,4.15,4.15,0,0,1-.4-1.84,4.21,4.21,0,0,1,.44-2,3.87,3.87,0,0,1,1.19-1.35,6,6,0,0,1,1.71-.84,13.6,13.6,0,0,1,2-.44,20.62,20.62,0,0,1,2.07-.17l1.91,0a2.23,2.23,0,0,0-.81-1.79,2.91,2.91,0,0,0-1.91-.67,4.35,4.35,0,0,0-1.91.44,5.29,5.29,0,0,0-1.54,1.2L97.15,26a7.65,7.65,0,0,1,2.77-1.65,9.87,9.87,0,0,1,3.28-.56,8.68,8.68,0,0,1,3.07.47,4.47,4.47,0,0,1,1.92,1.37,5.21,5.21,0,0,1,1,2.22,14.61,14.61,0,0,1,.29,3v7h-3.9V36.14h-.06a4,4,0,0,1-1.88,1.58,6.37,6.37,0,0,1-2.48.48,6.09,6.09,0,0,1-1.84-.28Zm4-6a6.43,6.43,0,0,0-1.38.24,3,3,0,0,0-1.13.6,1.35,1.35,0,0,0-.47,1.1A1.21,1.21,0,0,0,101,35a2.69,2.69,0,0,0,1.36.36,4.1,4.1,0,0,0,1.2-.17,3.45,3.45,0,0,0,1-.48,2.23,2.23,0,0,0,1-1.92v-.9h-1c-.31,0-.71,0-1.2,0ZM85.47,37.69A7,7,0,0,1,83,36.23,6.78,6.78,0,0,1,81.41,34a7.75,7.75,0,0,1,0-5.93A6.78,6.78,0,0,1,83,25.76a7,7,0,0,1,2.43-1.45,8.46,8.46,0,0,1,3-.51,6.66,6.66,0,0,1,2.68.51,5.56,5.56,0,0,1,2,1.45A6.63,6.63,0,0,1,94.45,28a9.08,9.08,0,0,1,.46,3v1.32H85.06a3.32,3.32,0,0,0,1.1,1.94,3.12,3.12,0,0,0,2.09.71A3.05,3.05,0,0,0,90,34.51a4.8,4.8,0,0,0,1.26-1.2l3,2.17a6.7,6.7,0,0,1-2.57,2,7.71,7.71,0,0,1-3.23.71,8.58,8.58,0,0,1-3-.5Zm1.34-10.62a3,3,0,0,0-.91.58,2.42,2.42,0,0,0-.6.82,2.66,2.66,0,0,0-.24,1h5.6A2.45,2.45,0,0,0,90,27.61a2.51,2.51,0,0,0-1.9-.77,3.24,3.24,0,0,0-1.23.23ZM67.44,37.67A6.07,6.07,0,0,1,65.3,36.2,6.63,6.63,0,0,1,63.93,34a8.17,8.17,0,0,1-.48-2.85,8.9,8.9,0,0,1,.44-2.76A7.32,7.32,0,0,1,65.13,26a6.19,6.19,0,0,1,2-1.63,5.58,5.58,0,0,1,2.63-.6,7.49,7.49,0,0,1,2.48.4,4,4,0,0,1,1.88,1.41h0v-9.1h4.24V37.86h-3.9V36.05h0a4.66,4.66,0,0,1-.66.74,5.56,5.56,0,0,1-1,.7,6.46,6.46,0,0,1-1.21.51,5,5,0,0,1-1.38.2,7.11,7.11,0,0,1-2.77-.53Zm1.14-9.19A3.56,3.56,0,0,0,67.69,31a3.53,3.53,0,0,0,.89,2.51,3.74,3.74,0,0,0,5,0A3.53,3.53,0,0,0,74.47,31a3.56,3.56,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm119.51,9.35a2.56,2.56,0,0,1-.83-.55,2.41,2.41,0,0,1-.55-.83,2.58,2.58,0,0,1-.2-1,2.54,2.54,0,0,1,.2-1A2.5,2.5,0,0,1,188.09,33a2.76,2.76,0,0,1,1-.2,2.73,2.73,0,0,1,1,.2,2.6,2.6,0,0,1,.84.55,2.62,2.62,0,0,1,.75,1.85,2.76,2.76,0,0,1-.2,1,2.73,2.73,0,0,1-.55.83,2.6,2.6,0,0,1-.84.55,2.73,2.73,0,0,1-1,.2,2.67,2.67,0,0,1-1-.2Zm-8.38,0v-8a3.32,3.32,0,0,0-.41-1.66,1.56,1.56,0,0,0-1.46-.68,2.75,2.75,0,0,0-1.23.23,2,2,0,0,0-.79.67,2.77,2.77,0,0,0-.43,1,5.28,5.28,0,0,0-.12,1.19v7.26H171V30.6c0-.24,0-.54,0-.9a3.92,3.92,0,0,0-.2-1,2.05,2.05,0,0,0-.55-.82,1.67,1.67,0,0,0-1.12-.33,2.67,2.67,0,0,0-1.33.29,2,2,0,0,0-.78.79,3.4,3.4,0,0,0-.35,1.12,9.36,9.36,0,0,0-.09,1.3v6.83h-4.24V24.14h4.07V26h.06a3.18,3.18,0,0,1,.57-.79,3.71,3.71,0,0,1,.87-.71,5.18,5.18,0,0,1,1.16-.51,4.87,4.87,0,0,1,1.42-.2,5.46,5.46,0,0,1,2.56.59,3.78,3.78,0,0,1,1.68,1.87,4.53,4.53,0,0,1,1.78-1.9,5.42,5.42,0,0,1,2.57-.56,5.34,5.34,0,0,1,2.33.47,3.7,3.7,0,0,1,1.5,1.27,5.37,5.37,0,0,1,.8,1.89,10.65,10.65,0,0,1,.23,2.33v8.1Zm-61.28,0V24.13h4.24v2.2h0a5.21,5.21,0,0,1,1.62-1.9,4.07,4.07,0,0,1,2.35-.64l.73,0a3.87,3.87,0,0,1,.68.12V27.8a6.77,6.77,0,0,0-.89-.21,5.62,5.62,0,0,0-.92-.07,4.55,4.55,0,0,0-1.93.34,2.48,2.48,0,0,0-1.08.95,3.58,3.58,0,0,0-.5,1.45,12.9,12.9,0,0,0-.11,1.86v5.73Zm-6.76,0V16.51h4.24V37.86Z"/><path d="M1.5,0H51.89a1.5,1.5,0,0,1,1.5,1.5V51.77a1.52,1.52,0,0,1-1.51,1.51H1.51A1.51,1.51,0,0,1,0,51.77H0V1.5A1.5,1.5,0,0,1,1.5,0Z"/><path class="cls-2" d="M17,38.2v-17h6.21v17Zm14,0H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23c0,3.85-1.06,6.83-3.19,8.91s-5.11,3.13-9,3.14ZM31,33.07h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72,4.66,4.66,0,0,0-3.82-1.53H31ZM9.15,38.2V27.55h6.21V38.2Z"/></g></g></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       CHART 4: Most active investors leaderboard
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <h1 class="title">EIT Health tops the leaderboard, backing 42 of 356 4YFN26 Spinout rounds</h1>
+    <div class="subtitle">Most active investors in 4YFN26 Spinout portfolio companies, ranked by rounds participated in</div>
+
+    <div class="lb-list" id="leaderboard"></div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="110" height="26"><defs><style>.cls-1{fill:#001234;}.cls-2{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M211.51,37.69a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,207.45,34a7.75,7.75,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.31,7.31,0,0,1,2.44,1.46A6.82,6.82,0,0,1,221.55,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5A8.69,8.69,0,0,1,211.51,37.69Zm.48-9.2A3.53,3.53,0,0,0,211.1,31a3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0A3.56,3.56,0,0,0,217.9,31a3.54,3.54,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-13.49,9.2a7.31,7.31,0,0,1-2.44-1.46A6.89,6.89,0,0,1,194.44,34a7.63,7.63,0,0,1,0-5.93,6.79,6.79,0,0,1,1.62-2.27,7.15,7.15,0,0,1,2.44-1.46,8.6,8.6,0,0,1,3-.5,8.89,8.89,0,0,1,2.56.4,5.37,5.37,0,0,1,2.33,1.43l-2.8,2.94a2.25,2.25,0,0,0-.87-.75,2.47,2.47,0,0,0-1.22-.29,3.22,3.22,0,0,0-2.5,1,3.52,3.52,0,0,0-.89,2.5A3.53,3.53,0,0,0,199,33.5a3.22,3.22,0,0,0,2.5,1,2.26,2.26,0,0,0,1.22-.3,3.63,3.63,0,0,0,.87-.74l2.8,2.94A5.35,5.35,0,0,1,204,37.78a8.26,8.26,0,0,1-2.56.41A8.6,8.6,0,0,1,198.5,37.69Zm-48.73,0a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,145.71,34a7.63,7.63,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.15,7.15,0,0,1,2.44,1.46A6.82,6.82,0,0,1,159.81,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5,8.69,8.69,0,0,1-3-.5Zm.48-9.2a3.53,3.53,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-17.2,9.2a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,129,34,7.75,7.75,0,0,1,129,28a6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,9.16,9.16,0,0,1,6,0,7.31,7.31,0,0,1,2.44,1.46A7,7,0,0,1,143.09,28a7.75,7.75,0,0,1,0,5.93,7.07,7.07,0,0,1-1.63,2.27A7.31,7.31,0,0,1,139,37.69a9.16,9.16,0,0,1-6,0Zm.48-9.2a3.48,3.48,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0ZM99.32,37.92a4.41,4.41,0,0,1-1.57-.8,3.83,3.83,0,0,1-1.08-1.32,4.15,4.15,0,0,1-.4-1.84,4.21,4.21,0,0,1,.44-2,3.87,3.87,0,0,1,1.19-1.35,6,6,0,0,1,1.71-.84,13.6,13.6,0,0,1,2-.44,20.62,20.62,0,0,1,2.07-.17l1.91,0a2.23,2.23,0,0,0-.81-1.79,2.91,2.91,0,0,0-1.91-.67,4.35,4.35,0,0,0-1.91.44,5.29,5.29,0,0,0-1.54,1.2L97.15,26a7.65,7.65,0,0,1,2.77-1.65,9.87,9.87,0,0,1,3.28-.56,8.68,8.68,0,0,1,3.07.47,4.47,4.47,0,0,1,1.92,1.37,5.21,5.21,0,0,1,1,2.22,14.61,14.61,0,0,1,.29,3v7h-3.9V36.14h-.06a4,4,0,0,1-1.88,1.58,6.37,6.37,0,0,1-2.48.48,6.09,6.09,0,0,1-1.84-.28Zm4-6a6.43,6.43,0,0,0-1.38.24,3,3,0,0,0-1.13.6,1.35,1.35,0,0,0-.47,1.1A1.21,1.21,0,0,0,101,35a2.69,2.69,0,0,0,1.36.36,4.1,4.1,0,0,0,1.2-.17,3.45,3.45,0,0,0,1-.48,2.23,2.23,0,0,0,1-1.92v-.9h-1c-.31,0-.71,0-1.2,0ZM85.47,37.69A7,7,0,0,1,83,36.23,6.78,6.78,0,0,1,81.41,34a7.75,7.75,0,0,1,0-5.93A6.78,6.78,0,0,1,83,25.76a7,7,0,0,1,2.43-1.45,8.46,8.46,0,0,1,3-.51,6.66,6.66,0,0,1,2.68.51,5.56,5.56,0,0,1,2,1.45A6.63,6.63,0,0,1,94.45,28a9.08,9.08,0,0,1,.46,3v1.32H85.06a3.32,3.32,0,0,0,1.1,1.94,3.12,3.12,0,0,0,2.09.71A3.05,3.05,0,0,0,90,34.51a4.8,4.8,0,0,0,1.26-1.2l3,2.17a6.7,6.7,0,0,1-2.57,2,7.71,7.71,0,0,1-3.23.71,8.58,8.58,0,0,1-3-.5Zm1.34-10.62a3,3,0,0,0-.91.58,2.42,2.42,0,0,0-.6.82,2.66,2.66,0,0,0-.24,1h5.6A2.45,2.45,0,0,0,90,27.61a2.51,2.51,0,0,0-1.9-.77,3.24,3.24,0,0,0-1.23.23ZM67.44,37.67A6.07,6.07,0,0,1,65.3,36.2,6.63,6.63,0,0,1,63.93,34a8.17,8.17,0,0,1-.48-2.85,8.9,8.9,0,0,1,.44-2.76A7.32,7.32,0,0,1,65.13,26a6.19,6.19,0,0,1,2-1.63,5.58,5.58,0,0,1,2.63-.6,7.49,7.49,0,0,1,2.48.4,4,4,0,0,1,1.88,1.41h0v-9.1h4.24V37.86h-3.9V36.05h0a4.66,4.66,0,0,1-.66.74,5.56,5.56,0,0,1-1,.7,6.46,6.46,0,0,1-1.21.51,5,5,0,0,1-1.38.2,7.11,7.11,0,0,1-2.77-.53Zm1.14-9.19A3.56,3.56,0,0,0,67.69,31a3.53,3.53,0,0,0,.89,2.51,3.74,3.74,0,0,0,5,0A3.53,3.53,0,0,0,74.47,31a3.56,3.56,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm119.51,9.35a2.56,2.56,0,0,1-.83-.55,2.41,2.41,0,0,1-.55-.83,2.58,2.58,0,0,1-.2-1,2.54,2.54,0,0,1,.2-1A2.5,2.5,0,0,1,188.09,33a2.76,2.76,0,0,1,1-.2,2.73,2.73,0,0,1,1,.2,2.6,2.6,0,0,1,.84.55,2.62,2.62,0,0,1,.75,1.85,2.76,2.76,0,0,1-.2,1,2.73,2.73,0,0,1-.55.83,2.6,2.6,0,0,1-.84.55,2.73,2.73,0,0,1-1,.2,2.67,2.67,0,0,1-1-.2Zm-8.38,0v-8a3.32,3.32,0,0,0-.41-1.66,1.56,1.56,0,0,0-1.46-.68,2.75,2.75,0,0,0-1.23.23,2,2,0,0,0-.79.67,2.77,2.77,0,0,0-.43,1,5.28,5.28,0,0,0-.12,1.19v7.26H171V30.6c0-.24,0-.54,0-.9a3.92,3.92,0,0,0-.2-1,2.05,2.05,0,0,0-.55-.82,1.67,1.67,0,0,0-1.12-.33,2.67,2.67,0,0,0-1.33.29,2,2,0,0,0-.78.79,3.4,3.4,0,0,0-.35,1.12,9.36,9.36,0,0,0-.09,1.3v6.83h-4.24V24.14h4.07V26h.06a3.18,3.18,0,0,1,.57-.79,3.71,3.71,0,0,1,.87-.71,5.18,5.18,0,0,1,1.16-.51,4.87,4.87,0,0,1,1.42-.2,5.46,5.46,0,0,1,2.56.59,3.78,3.78,0,0,1,1.68,1.87,4.53,4.53,0,0,1,1.78-1.9,5.42,5.42,0,0,1,2.57-.56,5.34,5.34,0,0,1,2.33.47,3.7,3.7,0,0,1,1.5,1.27,5.37,5.37,0,0,1,.8,1.89,10.65,10.65,0,0,1,.23,2.33v8.1Zm-61.28,0V24.13h4.24v2.2h0a5.21,5.21,0,0,1,1.62-1.9,4.07,4.07,0,0,1,2.35-.64l.73,0a3.87,3.87,0,0,1,.68.12V27.8a6.77,6.77,0,0,0-.89-.21,5.62,5.62,0,0,0-.92-.07,4.55,4.55,0,0,0-1.93.34,2.48,2.48,0,0,0-1.08.95,3.58,3.58,0,0,0-.5,1.45,12.9,12.9,0,0,0-.11,1.86v5.73Zm-6.76,0V16.51h4.24V37.86Z"/><path d="M1.5,0H51.89a1.5,1.5,0,0,1,1.5,1.5V51.77a1.52,1.52,0,0,1-1.51,1.51H1.51A1.51,1.51,0,0,1,0,51.77H0V1.5A1.5,1.5,0,0,1,1.5,0Z"/><path class="cls-2" d="M17,38.2v-17h6.21v17Zm14,0H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23c0,3.85-1.06,6.83-3.19,8.91s-5.11,3.13-9,3.14ZM31,33.07h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72,4.66,4.66,0,0,0-3.82-1.53H31ZM9.15,38.2V27.55h6.21V38.2Z"/></g></g></svg>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+
+    <div class="spot-stats">
+      <div class="spot-stat">
+        <div class="spot-stat-num">$61.4M</div>
+        <div class="spot-stat-label">Total raised</div>
+        <div class="spot-stat-sub">Across 3 rounds since Nov 2024</div>
+      </div>
+      <div class="spot-stat">
+        <div class="spot-stat-num coral">13 → 111</div>
+        <div class="spot-stat-label">Headcount growth</div>
+        <div class="spot-stat-sub">Oct 2024 → Apr 2026</div>
+      </div>
+      <div class="spot-stat">
+        <div class="spot-stat-num blue">95</div>
+        <div class="spot-stat-label">Dealroom Signal</div>
+        <div class="spot-stat-sub">Top-tier momentum score</div>
+      </div>
+      <div class="spot-stat award">
+        <div class="spot-stat-num with-icon violet">
+          <svg class="award-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14v3a4 4 0 0 1-4 4h-.05A4 4 0 0 1 13 13.86V17h3v3H8v-3h3v-3.14A4 4 0 0 1 9.05 10H9a4 4 0 0 1-4-4V3zm2 2v1a2 2 0 0 0 2 2h.18A4 4 0 0 1 9 7V5H7zm10 0v2a4 4 0 0 1-.18 1.16H17a2 2 0 0 0 2-2V5h-2z"/></svg>
+          Winner
+        </div>
+        <div class="spot-stat-label">4YFN Award · 2026</div>
+        <div class="spot-stat-sub">Recognised at the 4YFN Awards in Barcelona</div>
+      </div>
+    </div>
+
+    <div class="spot-about">
+      Barcelona-based deeptech building <strong>Jarvis</strong> — a clinical AI assistant designed to give researchers fast, universal access to clinical-trial data — with the goal of accelerating drug development and cutting the cost of getting treatments to patients.
+    </div>
+
+    <div class="spot-backers">
+      <span class="spot-backers-label">Backed by</span>
+      <span class="spot-backers-list">DST Global · Norrsken VC · Plug and Play · Mustard Seed MAZE · Outsized Ventures · YZR Capital · Arthur Mensch · Nikolay Storonsky · Paulo Rosado</span>
+    </div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="110" height="26"><defs><style>.cls-1{fill:#001234;}.cls-2{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M211.51,37.69a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,207.45,34a7.75,7.75,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.31,7.31,0,0,1,2.44,1.46A6.82,6.82,0,0,1,221.55,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5A8.69,8.69,0,0,1,211.51,37.69Zm.48-9.2A3.53,3.53,0,0,0,211.1,31a3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0A3.56,3.56,0,0,0,217.9,31a3.54,3.54,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-13.49,9.2a7.31,7.31,0,0,1-2.44-1.46A6.89,6.89,0,0,1,194.44,34a7.63,7.63,0,0,1,0-5.93,6.79,6.79,0,0,1,1.62-2.27,7.15,7.15,0,0,1,2.44-1.46,8.6,8.6,0,0,1,3-.5,8.89,8.89,0,0,1,2.56.4,5.37,5.37,0,0,1,2.33,1.43l-2.8,2.94a2.25,2.25,0,0,0-.87-.75,2.47,2.47,0,0,0-1.22-.29,3.22,3.22,0,0,0-2.5,1,3.52,3.52,0,0,0-.89,2.5A3.53,3.53,0,0,0,199,33.5a3.22,3.22,0,0,0,2.5,1,2.26,2.26,0,0,0,1.22-.3,3.63,3.63,0,0,0,.87-.74l2.8,2.94A5.35,5.35,0,0,1,204,37.78a8.26,8.26,0,0,1-2.56.41A8.6,8.6,0,0,1,198.5,37.69Zm-48.73,0a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,145.71,34a7.63,7.63,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.15,7.15,0,0,1,2.44,1.46A6.82,6.82,0,0,1,159.81,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5,8.69,8.69,0,0,1-3-.5Zm.48-9.2a3.53,3.53,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-17.2,9.2a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,129,34,7.75,7.75,0,0,1,129,28a6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,9.16,9.16,0,0,1,6,0,7.31,7.31,0,0,1,2.44,1.46A7,7,0,0,1,143.09,28a7.75,7.75,0,0,1,0,5.93,7.07,7.07,0,0,1-1.63,2.27A7.31,7.31,0,0,1,139,37.69a9.16,9.16,0,0,1-6,0Zm.48-9.2a3.48,3.48,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0ZM99.32,37.92a4.41,4.41,0,0,1-1.57-.8,3.83,3.83,0,0,1-1.08-1.32,4.15,4.15,0,0,1-.4-1.84,4.21,4.21,0,0,1,.44-2,3.87,3.87,0,0,1,1.19-1.35,6,6,0,0,1,1.71-.84,13.6,13.6,0,0,1,2-.44,20.62,20.62,0,0,1,2.07-.17l1.91,0a2.23,2.23,0,0,0-.81-1.79,2.91,2.91,0,0,0-1.91-.67,4.35,4.35,0,0,0-1.91.44,5.29,5.29,0,0,0-1.54,1.2L97.15,26a7.65,7.65,0,0,1,2.77-1.65,9.87,9.87,0,0,1,3.28-.56,8.68,8.68,0,0,1,3.07.47,4.47,4.47,0,0,1,1.92,1.37,5.21,5.21,0,0,1,1,2.22,14.61,14.61,0,0,1,.29,3v7h-3.9V36.14h-.06a4,4,0,0,1-1.88,1.58,6.37,6.37,0,0,1-2.48.48,6.09,6.09,0,0,1-1.84-.28Zm4-6a6.43,6.43,0,0,0-1.38.24,3,3,0,0,0-1.13.6,1.35,1.35,0,0,0-.47,1.1A1.21,1.21,0,0,0,101,35a2.69,2.69,0,0,0,1.36.36,4.1,4.1,0,0,0,1.2-.17,3.45,3.45,0,0,0,1-.48,2.23,2.23,0,0,0,1-1.92v-.9h-1c-.31,0-.71,0-1.2,0ZM85.47,37.69A7,7,0,0,1,83,36.23,6.78,6.78,0,0,1,81.41,34a7.75,7.75,0,0,1,0-5.93A6.78,6.78,0,0,1,83,25.76a7,7,0,0,1,2.43-1.45,8.46,8.46,0,0,1,3-.51,6.66,6.66,0,0,1,2.68.51,5.56,5.56,0,0,1,2,1.45A6.63,6.63,0,0,1,94.45,28a9.08,9.08,0,0,1,.46,3v1.32H85.06a3.32,3.32,0,0,0,1.1,1.94,3.12,3.12,0,0,0,2.09.71A3.05,3.05,0,0,0,90,34.51a4.8,4.8,0,0,0,1.26-1.2l3,2.17a6.7,6.7,0,0,1-2.57,2,7.71,7.71,0,0,1-3.23.71,8.58,8.58,0,0,1-3-.5Zm1.34-10.62a3,3,0,0,0-.91.58,2.42,2.42,0,0,0-.6.82,2.66,2.66,0,0,0-.24,1h5.6A2.45,2.45,0,0,0,90,27.61a2.51,2.51,0,0,0-1.9-.77,3.24,3.24,0,0,0-1.23.23ZM67.44,37.67A6.07,6.07,0,0,1,65.3,36.2,6.63,6.63,0,0,1,63.93,34a8.17,8.17,0,0,1-.48-2.85,8.9,8.9,0,0,1,.44-2.76A7.32,7.32,0,0,1,65.13,26a6.19,6.19,0,0,1,2-1.63,5.58,5.58,0,0,1,2.63-.6,7.49,7.49,0,0,1,2.48.4,4,4,0,0,1,1.88,1.41h0v-9.1h4.24V37.86h-3.9V36.05h0a4.66,4.66,0,0,1-.66.74,5.56,5.56,0,0,1-1,.7,6.46,6.46,0,0,1-1.21.51,5,5,0,0,1-1.38.2,7.11,7.11,0,0,1-2.77-.53Zm1.14-9.19A3.56,3.56,0,0,0,67.69,31a3.53,3.53,0,0,0,.89,2.51,3.74,3.74,0,0,0,5,0A3.53,3.53,0,0,0,74.47,31a3.56,3.56,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm119.51,9.35a2.56,2.56,0,0,1-.83-.55,2.41,2.41,0,0,1-.55-.83,2.58,2.58,0,0,1-.2-1,2.54,2.54,0,0,1,.2-1A2.5,2.5,0,0,1,188.09,33a2.76,2.76,0,0,1,1-.2,2.73,2.73,0,0,1,1,.2,2.6,2.6,0,0,1,.84.55,2.62,2.62,0,0,1,.75,1.85,2.76,2.76,0,0,1-.2,1,2.73,2.73,0,0,1-.55.83,2.6,2.6,0,0,1-.84.55,2.73,2.73,0,0,1-1,.2,2.67,2.67,0,0,1-1-.2Zm-8.38,0v-8a3.32,3.32,0,0,0-.41-1.66,1.56,1.56,0,0,0-1.46-.68,2.75,2.75,0,0,0-1.23.23,2,2,0,0,0-.79.67,2.77,2.77,0,0,0-.43,1,5.28,5.28,0,0,0-.12,1.19v7.26H171V30.6c0-.24,0-.54,0-.9a3.92,3.92,0,0,0-.2-1,2.05,2.05,0,0,0-.55-.82,1.67,1.67,0,0,0-1.12-.33,2.67,2.67,0,0,0-1.33.29,2,2,0,0,0-.78.79,3.4,3.4,0,0,0-.35,1.12,9.36,9.36,0,0,0-.09,1.3v6.83h-4.24V24.14h4.07V26h.06a3.18,3.18,0,0,1,.57-.79,3.71,3.71,0,0,1,.87-.71,5.18,5.18,0,0,1,1.16-.51,4.87,4.87,0,0,1,1.42-.2,5.46,5.46,0,0,1,2.56.59,3.78,3.78,0,0,1,1.68,1.87,4.53,4.53,0,0,1,1.78-1.9,5.42,5.42,0,0,1,2.57-.56,5.34,5.34,0,0,1,2.33.47,3.7,3.7,0,0,1,1.5,1.27,5.37,5.37,0,0,1,.8,1.89,10.65,10.65,0,0,1,.23,2.33v8.1Zm-61.28,0V24.13h4.24v2.2h0a5.21,5.21,0,0,1,1.62-1.9,4.07,4.07,0,0,1,2.35-.64l.73,0a3.87,3.87,0,0,1,.68.12V27.8a6.77,6.77,0,0,0-.89-.21,5.62,5.62,0,0,0-.92-.07,4.55,4.55,0,0,0-1.93.34,2.48,2.48,0,0,0-1.08.95,3.58,3.58,0,0,0-.5,1.45,12.9,12.9,0,0,0-.11,1.86v5.73Zm-6.76,0V16.51h4.24V37.86Z"/><path d="M1.5,0H51.89a1.5,1.5,0,0,1,1.5,1.5V51.77a1.52,1.52,0,0,1-1.51,1.51H1.51A1.51,1.51,0,0,1,0,51.77H0V1.5A1.5,1.5,0,0,1,1.5,0Z"/><path class="cls-2" d="M17,38.2v-17h6.21v17Zm14,0H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23c0,3.85-1.06,6.83-3.19,8.91s-5.11,3.13-9,3.14ZM31,33.07h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72,4.66,4.66,0,0,0-3.82-1.53H31ZM9.15,38.2V27.55h6.21V38.2Z"/></g></g></svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Shared helpers ─────────────────────────────────────────────
+  const FONT_FAMILY = "'Source Sans 3', system-ui, sans-serif";
+  const TEXT = '#0F172A';
+  const TEXT_SECONDARY = '#475569';
+  const TEXT_MUTED = '#94A3B8';
+  const GRID = 'rgba(0,0,0,0.06)';
+  // 4YFN palette
+  const UV = '#6300FF';
+  const UV_LIGHT = '#C9A3FF';
+  const CORAL = '#FF6131';
+
+  function formatUSD(v) {
+    if (v >= 1e12) return '$' + (v / 1e12).toFixed(1) + 'T';
+    if (v >= 1e9)  return '$' + (v / 1e9).toFixed(0) + 'B';
+    if (v >= 1e6)  return '$' + (v / 1e6).toFixed(0) + 'M';
+    if (v >= 1e3)  return '$' + (v / 1e3).toFixed(0) + 'K';
+    return '$' + v;
+  }
+  function formatUSD1(v) {
+    if (v >= 1e9) return '$' + (v / 1e9).toFixed(1) + 'B';
+    if (v >= 1e6) return '$' + (v / 1e6).toFixed(1) + 'M';
+    return '$' + v;
+  }
+  function formatPct(v) { return v.toFixed(0) + '%'; }
+
+  // ── DATA ───────────────────────────────────────────────────────
+  const YEARS = ['2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+  const HEALTH_VC = [5079651482,5446405672,6166361611,7411218766,9231219044,13400088326,14498169831,17490325544,28464207406,29083458881,42276119575,71328880669,53793606889,41714964056,55994963645,51190976053,36208016253];
+  const AI_HEALTH = [251634342,237692983,434756863,1203778468,1330589793,1753633651,2768743557,4547960251,9683518616,6572989574,7106758085,20246120449,12459103449,9988679961,21858491271,20087193565,18096608173];
+  const AI_SHARE = [0.049538,0.043642,0.070505,0.162427,0.144140,0.130867,0.190972,0.260027,0.340200,0.226004,0.168103,0.283842,0.231609,0.239451,0.390365,0.392397,0.499796];
+
+  // 2026 annualisation factor (today is day 194 of the year)
+  const ANNUAL_FACTOR = 365 / 194;
+  const HEALTH_VC_2026_PROJ = HEALTH_VC[HEALTH_VC.length - 1] * ANNUAL_FACTOR;
+
+  // ── CHART 1: Global Health VC bars + 2026 projection ───────────
+  (function buildChart1() {
+    const ytd2026 = HEALTH_VC[HEALTH_VC.length - 1];
+    const projectionAddition = HEALTH_VC_2026_PROJ - ytd2026;
+
+    const ytdRow = YEARS.map((_, i) => i === YEARS.length - 1 ? ytd2026 : null);
+    const projRow = YEARS.map((_, i) => i === YEARS.length - 1 ? projectionAddition : null);
+    const actualRow = HEALTH_VC.map((v, i) => i === YEARS.length - 1 ? null : v);
+
+    const ctx = document.getElementById('chart1').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: YEARS,
+        datasets: [
+          {
+            label: 'Actual',
+            data: actualRow,
+            backgroundColor: UV,
+            borderRadius: 4,
+            borderSkipped: false,
+            stack: 'stack1',
+          },
+          {
+            label: '2026 YTD',
+            data: ytdRow,
+            backgroundColor: UV,
+            borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 },
+            borderSkipped: false,
+            stack: 'stack1',
+          },
+          {
+            label: 'Projected (rest of 2026)',
+            data: projRow,
+            backgroundColor: UV_LIGHT,
+            borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 },
+            borderSkipped: false,
+            stack: 'stack1',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 700 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#FFFFFF',
+            titleColor: TEXT,
+            bodyColor: TEXT_SECONDARY,
+            borderColor: 'rgba(0,0,0,0.08)',
+            borderWidth: 1,
+            padding: 12,
+            cornerRadius: 10,
+            titleFont: { family: FONT_FAMILY, weight: '600', size: 13 },
+            bodyFont: { family: FONT_FAMILY, size: 13 },
+            filter: ctx => ctx.raw !== null,
+            callbacks: {
+              title: items => items[0].label === '2026' ? '2026 (YTD + projection)' : items[0].label,
+              label: ctx => {
+                if (ctx.dataset.label === 'Projected (rest of 2026)') {
+                  return '  Projected total: ' + formatUSD1(HEALTH_VC_2026_PROJ);
+                }
+                if (ctx.dataset.label === '2026 YTD') {
+                  return '  YTD raised: ' + formatUSD1(ctx.raw);
+                }
+                return '  ' + formatUSD1(ctx.raw);
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            stacked: true,
+            grid: { display: false },
+            ticks: { color: TEXT_SECONDARY, font: { family: FONT_FAMILY, size: 12 } },
+            border: { display: false },
+          },
+          y: {
+            stacked: true,
+            grid: { color: GRID, drawBorder: false },
+            ticks: {
+              color: TEXT_MUTED,
+              font: { family: FONT_FAMILY, size: 12 },
+              callback: v => formatUSD(v),
+            },
+            border: { display: false },
+          }
+        }
+      }
+    });
+  })();
+
+  // ── CHART 2: AI share line chart with Ultra Violet → Coral gradient line ──
+  (function buildChart2() {
+    const ctx = document.getElementById('chart2').getContext('2d');
+    // Vertical area gradient (UV to transparent)
+    const areaGradient = ctx.createLinearGradient(0, 0, 0, 360);
+    areaGradient.addColorStop(0, 'rgba(99, 0, 255, 0.35)');
+    areaGradient.addColorStop(0.5, 'rgba(255, 97, 49, 0.18)');
+    areaGradient.addColorStop(1, 'rgba(255, 97, 49, 0.0)');
+
+    // Horizontal stroke gradient (UV on left, Coral on right) for the line itself
+    const lineGradient = ctx.createLinearGradient(0, 0, 900, 0);
+    lineGradient.addColorStop(0, UV);
+    lineGradient.addColorStop(1, CORAL);
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: YEARS,
+        datasets: [{
+          label: 'AI share',
+          data: AI_SHARE.map(v => v * 100),
+          borderColor: lineGradient,
+          backgroundColor: areaGradient,
+          borderWidth: 3,
+          pointRadius: 0,
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: UV,
+          pointHoverBorderColor: '#FFFFFF',
+          pointHoverBorderWidth: 2,
+          tension: 0.4,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 800 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#FFFFFF',
+            titleColor: TEXT,
+            bodyColor: TEXT_SECONDARY,
+            borderColor: 'rgba(0,0,0,0.08)',
+            borderWidth: 1,
+            padding: 12,
+            cornerRadius: 10,
+            titleFont: { family: FONT_FAMILY, weight: '600', size: 13 },
+            bodyFont: { family: FONT_FAMILY, size: 13 },
+            callbacks: {
+              title: items => items[0].label === '2026' ? '2026 (year-to-date)' : items[0].label,
+              label: ctx => '  ' + ctx.raw.toFixed(1) + '% of Health VC',
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: TEXT_SECONDARY, font: { family: FONT_FAMILY, size: 12 } },
+            border: { display: false },
+          },
+          y: {
+            grid: { color: GRID, drawBorder: false },
+            ticks: {
+              color: TEXT_MUTED,
+              font: { family: FONT_FAMILY, size: 12 },
+              callback: v => formatPct(v),
+            },
+            border: { display: false },
+            beginAtZero: true,
+          }
+        }
+      }
+    });
+  })();
+
+  // ── Download-as-PDF (cover + one page per chart) ──────────────
+  (function wirePdfDownload() {
+    const btn = document.getElementById('pdfDownloadBtn');
+    if (!btn) return;
+
+    // Capture an element via html2canvas, with the per-chart PNG buttons and
+    // the PDF button itself ignored so neither appears in the rendered image.
+    async function captureClean(el, { backgroundColor }) {
+      return html2canvas(el, {
+        backgroundColor,
+        scale: 2,
+        useCORS: true,
+        ignoreElements: e =>
+          e.classList && (
+            e.classList.contains('download-btn') ||
+            e.classList.contains('pdf-download-btn')
+          ),
+      });
+    }
+
+    btn.addEventListener('click', async () => {
+      const originalLabel = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = 'Preparing PDF…';
+
+      // A4 landscape in mm. Charts get a small margin; cover is full-bleed.
+      const PW = 297, PH = 210, MARGIN = 12;
+
+      // Strip card chrome (border/radius/shadow) during capture so the page
+      // doesn't show a faint rounded outline — same trick as the PNG export.
+      function stripChrome(card) {
+        return {
+          border: card.style.border,
+          borderRadius: card.style.borderRadius,
+          boxShadow: card.style.boxShadow,
+          apply() {
+            card.style.border = 'none';
+            card.style.borderRadius = '0';
+            card.style.boxShadow = 'none';
+          },
+          restore() {
+            card.style.border = this.border;
+            card.style.borderRadius = this.borderRadius;
+            card.style.boxShadow = this.boxShadow;
+          },
+        };
+      }
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+        // Page 1: full-bleed cover
+        const coverEl = document.getElementById('pdfCover');
+        const coverCanvas = await captureClean(coverEl, { backgroundColor: null });
+        pdf.addImage(
+          coverCanvas.toDataURL('image/jpeg', 0.92),
+          'JPEG', 0, 0, PW, PH
+        );
+
+        // Pages 2..N: one chart card per page, fitted into the content area
+        const cards = document.querySelectorAll('.outer > .card');
+        for (const card of cards) {
+          pdf.addPage();
+          const chrome = stripChrome(card);
+          chrome.apply();
+          let cardCanvas;
+          try {
+            cardCanvas = await captureClean(card, { backgroundColor: '#FFFFFF' });
+          } finally {
+            chrome.restore();
+          }
+          const contentW = PW - 2 * MARGIN;
+          const contentH = PH - 2 * MARGIN;
+          const aspect = cardCanvas.width / cardCanvas.height;
+          let w = contentW;
+          let h = contentW / aspect;
+          if (h > contentH) {
+            h = contentH;
+            w = contentH * aspect;
+          }
+          const x = (PW - w) / 2;
+          const y = (PH - h) / 2;
+          pdf.addImage(
+            cardCanvas.toDataURL('image/jpeg', 0.92),
+            'JPEG', x, y, w, h
+          );
+        }
+
+        // Final page: full-bleed back cover
+        pdf.addPage();
+        const backEl = document.getElementById('pdfBackCover');
+        const backCanvas = await captureClean(backEl, { backgroundColor: null });
+        pdf.addImage(
+          backCanvas.toDataURL('image/jpeg', 0.92),
+          'JPEG', 0, 0, PW, PH
+        );
+
+        pdf.save('4yfn-healthtech-data-capsule.pdf');
+      } catch (err) {
+        console.error('PDF export failed', err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalLabel;
+      }
+    });
+  })();
+
+  // ── Download-as-PNG buttons ───────────────────────────────────
+  (function wireDownloadButtons() {
+    function slugify(str) {
+      return str.toLowerCase().trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .slice(0, 60);
+    }
+
+    document.querySelectorAll('.card .download-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('.card');
+        const titleEl = card.querySelector('.title');
+        const filename = '4yfn-health-' + (titleEl ? slugify(titleEl.textContent) : 'chart') + '.png';
+
+        btn.disabled = true;
+        const prevBorder = card.style.border;
+        const prevRadius = card.style.borderRadius;
+        const prevShadow = card.style.boxShadow;
+        card.style.border = 'none';
+        card.style.borderRadius = '0';
+        card.style.boxShadow = 'none';
+        try {
+          const canvas = await html2canvas(card, {
+            backgroundColor: '#FFFFFF',
+            scale: 2,
+            useCORS: true,
+            ignoreElements: el => el.classList && el.classList.contains('download-btn'),
+          });
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        } catch (err) {
+          console.error('Chart export failed', err);
+        } finally {
+          card.style.border = prevBorder;
+          card.style.borderRadius = prevRadius;
+          card.style.boxShadow = prevShadow;
+          btn.disabled = false;
+        }
+      });
+    });
+  })();
+
+  // ── CHART 4: Investor leaderboard ──────────────────────────────
+  (function buildLeaderboard() {
+    const investors = [
+      { name: 'EIT Health', count: 42 },
+      { name: 'European Innovation Council', count: 17 },
+      { name: 'Polytechnic University of Catalonia', count: 12 },
+      { name: 'Grow Venture Partners', count: 10 },
+      { name: 'University of Barcelona', count: 10 },
+      { name: 'Vall d\'Hebron University Hospital', count: 6 },
+      { name: '"la Caixa" Foundation', count: 6 },
+      { name: 'Sabadell BStartup', count: 5 },
+      { name: 'Spanish National Research Council', count: 5 },
+      { name: 'Innovacom', count: 5 },
+    ];
+    const max = investors[0].count;
+    const container = document.getElementById('leaderboard');
+    investors.forEach((inv, i) => {
+      const pct = (inv.count / max) * 100;
+      const row = document.createElement('div');
+      row.className = 'lb-row';
+      row.innerHTML = `
+        <div class="lb-rank">${i + 1}</div>
+        <div class="lb-name">${inv.name}</div>
+        <div class="lb-count">${inv.count}<span class="rounds-label">rounds</span></div>
+        <div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>
+      `;
+      container.appendChild(row);
+    });
+  })();
+</script>
+</body>
+</html>
