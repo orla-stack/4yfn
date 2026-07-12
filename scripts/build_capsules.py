@@ -121,10 +121,11 @@ def build(slug, config):
     b5 = fmt_amount_short_usd(stats["combined_value_usd"])
     b2_label = stats["cross_label"]
 
-    # Chart 4 headline: "<top> is the runaway leader, backing X of N 4YFN26 <sector_adj> rounds"
+    # Chart 4 headline: e.g. "EIT Health tops the leaderboard, involved in 42 of 356
+    # rounds raised by 4YFN 2026 Spinout startups"
     top_name = lb[0]["name"]; top_count = lb[0]["count"]
-    chart4_headline = f"{top_name} tops the leaderboard, backing {top_count} of {stats['rounds']} 4YFN26 {sector_adj} rounds"
-    chart4_subtitle = f"Most active investors in 4YFN26 {sector_adj} portfolio companies, ranked by rounds participated in"
+    chart4_headline = f"{top_name} tops the leaderboard, involved in {top_count} of {stats['rounds']} rounds raised by 4YFN 2026 {sector_adj} startups"
+    chart4_subtitle = f"Most active investors in 4YFN 2026 {sector_adj} startups, ranked by number of rounds"
 
     # ---- Do the substitutions ----
     html = template
