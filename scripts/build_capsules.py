@@ -32,21 +32,36 @@ def js_array(nums):
     return "[" + ",".join(str(int(n)) for n in nums) + "]"
 
 def delete_spotlight(html):
-    """Remove the Biorce spotlight card (Chart 5). The card is a <div class="card">
-    block that starts after the CHART 5 comment and ends at its closing </div>."""
-    # Match the CHART 5 banner comment through its closing </div>\n\n  (before the outer </div>).
+    """Remove the Biorce spotlight card (Chart 5) — its CHART 5 banner comment,
+    the whole <div class="card">…</div>, and any trailing blank line.
+
+    The card's outer <div class="card"> is indented with exactly 2 spaces, so
+    its matching close is uniquely "\\n  </div>" at the start of a line. All
+    inner </div>s inside the card have 4/6/8-space indents and therefore
+    don't collide with the anchor.
+    """
     pattern = re.compile(
-        r"\s*<!--\s*═+\s*\n"
-        r"\s*CHART 5:[^\n]*\n"
-        r"\s*═+\s*-->\s*\n"
-        r"\s*<div class=\"card\">.*?</div>\s*\n\s*</div>",
+        r"\n\n  <!--\s*═+\s*\n"
+        r" +CHART 5:[^\n]*\n"
+        r" +═+\s*-->\s*\n"
+        r"  <div class=\"card\">.*?\n  </div>",
         re.DOTALL,
     )
-    m = pattern.search(html)
-    if not m:
-        raise RuntimeError("could not find spotlight card boundaries")
-    # Preserve the outer </div> that follows
-    return html[:m.start()] + "\n</div>" + html[m.end():]
+    new_html, n = pattern.subn("", html)
+    if n != 1:
+        raise RuntimeError(f"expected exactly 1 spotlight-card match, got {n}")
+
+    # Also strip the dead .spot-* CSS block that only serves the spotlight card.
+    # It starts at the "Biorce spotlight" comment banner and runs through its
+    # own trailing @media block; the next section starts with a top-level comment.
+    css_pattern = re.compile(
+        r"\n\n    /\* ── Biorce spotlight[^\n]*\*/\n.*?\n    \}(?=\n  </style>)",
+        re.DOTALL,
+    )
+    new_html, css_n = css_pattern.subn("", new_html)
+    if css_n != 1:
+        raise RuntimeError(f"expected exactly 1 spotlight-CSS match, got {css_n}")
+    return new_html
 
 def build_leaderboard_data(top_investors):
     """Return JS-object-array text for the leaderboard `investors` const."""
