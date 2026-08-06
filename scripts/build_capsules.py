@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """Build /spinouts-capsule/index.html and /ai-capsule/index.html from the
-existing /health-capsule/index.html template, using the JSON pulled by
-fetch_capsules.py. Removes the Biorce spotlight card and rewrites all the
-text/data specific to Health.
+existing /health-capsule/index.html template.
+
+Each capsule replaces the Biorce spotlight with its own tail card:
+  * Spin-off capsule → Floodwaive spotlight (pitch-battle winner)
+  * AI capsule       → Top AI breakouts list
+
+The investor leaderboards use the Health-excluded variant so ranking isn't
+dominated by health-focused investors like EIT Health, with a footnote noting
+the exclusion.
 """
-import json, pathlib, re, time
+import base64, json, pathlib, re
 from datetime import datetime
 
 REPO = pathlib.Path("/Users/orla/Projects/4YFN")
@@ -14,32 +20,242 @@ DATA = pathlib.Path("/private/tmp/claude-501/-Users-orla-Projects-4YFN/7a2b42f9-
 data = json.loads(DATA.read_text())
 template = SRC.read_text()
 
-# ---- Day-of-year for the 2026 projection factor ----
 today = datetime.now()
-day_of_year = today.timetuple().tm_yday if today.year == 2026 else 141  # fallback to Health capsule's value
+day_of_year = today.timetuple().tm_yday if today.year == 2026 else 141
 
-# ---- Helpers ----
-def fmt_amount_short_usd(cents_or_usd, integer=True):
-    """Format e.g. 61400000 -> $61M, 850000000 -> $850M, 1355333306 -> $1.4B."""
-    v = cents_or_usd
+# ---- Formatting helpers ----
+def fmt_amount_short_usd(v):
     if v is None: return "—"
     if v >= 1e9: return f"${v/1e9:.1f}B"
     if v >= 1e6: return f"${round(v/1e6)}M"
     if v >= 1e3: return f"${round(v/1e3)}K"
     return f"${int(v)}"
 
+def fmt_amount_short_eur(v):
+    if v is None: return "—"
+    if v >= 1e9: return f"€{v/1e9:.1f}B"
+    if v >= 1e6: return f"€{round(v/1e6)}M"
+    if v >= 1e3: return f"€{round(v/1e3)}K"
+    return f"€{int(v)}"
+
 def js_array(nums):
     return "[" + ",".join(str(int(n)) for n in nums) + "]"
 
-def delete_spotlight(html):
-    """Remove the Biorce spotlight card (Chart 5) — its CHART 5 banner comment,
-    the whole <div class="card">…</div>, and any trailing blank line.
+# ---- Spotlight card (Biorce-style shape, filled in per capsule) ----
+def spotlight_card_html(
+    *, title, subtitle, name, tagline, meta_line, logo_data_uri, stats, about, footer_svgs,
+):
+    """Render a spotlight card. stats is a list of dicts with keys:
+    num, num_class (empty, coral, blue, violet, small, with-icon), label, sub,
+    optional card_class ('award'), optional prefix_svg."""
+    stat_blocks = []
+    for s in stats:
+        card_cls = f' {s["card_class"]}' if s.get("card_class") else ""
+        num_cls = f' {s["num_class"]}' if s.get("num_class") else ""
+        prefix = s.get("prefix_svg", "")
+        stat_blocks.append(f'''\
+      <div class="spot-stat{card_cls}">
+        <div class="spot-stat-num{num_cls}">{prefix}{s["num"]}</div>
+        <div class="spot-stat-label">{s["label"]}</div>
+        <div class="spot-stat-sub">{s["sub"]}</div>
+      </div>''')
+    stats_html = "\n".join(stat_blocks)
 
-    The card's outer <div class="card"> is indented with exactly 2 spaces, so
-    its matching close is uniquely "\\n  </div>" at the start of a line. All
-    inner </div>s inside the card have 4/6/8-space indents and therefore
-    don't collide with the anchor.
-    """
+    return f'''\
+  <!-- ════════════════════════════════════════════════════════════════
+       CHART 5: Company spotlight
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <h1 class="title">{title}</h1>
+    <div class="subtitle">{subtitle}</div>
+
+    <div class="spot-hero">
+      <div class="spot-logo">
+        <img src="{logo_data_uri}" alt="{name} logo" />
+      </div>
+      <div class="spot-id">
+        <div class="spot-name">{name}</div>
+        <div class="spot-tagline">{tagline}</div>
+        <div class="spot-meta">{meta_line}</div>
+      </div>
+    </div>
+
+    <div class="spot-stats">
+{stats_html}
+    </div>
+
+    <div class="spot-about">
+      {about}
+    </div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        {footer_svgs}
+      </div>
+    </div>
+  </div>'''
+
+# ---- Breakouts list card (bespoke to AI capsule) ----
+def breakouts_card_html(companies, footer_svgs):
+    rows = []
+    for i, c in enumerate(companies, start=1):
+        funding = fmt_amount_short_eur(c["total_funding_eur"]) if c.get("total_funding_eur") else "—"
+        signal = f'{c["signal"]:.1f}' if c.get("signal") is not None else "—"
+        hq = ", ".join(x for x in [c.get("hq_city"), c.get("hq_country")] if x)
+        meta = f'{hq}' + (f' · Founded {c["launch_year"]}' if c.get("launch_year") else "")
+        tagline = (c.get("tagline") or "").replace("&", "&amp;").replace("<", "&lt;")
+        rows.append(f'''\
+      <div class="bo-row">
+        <div class="bo-rank">{i}</div>
+        <div class="bo-info">
+          <div class="bo-name">{c["name"]}</div>
+          <div class="bo-tagline">{tagline}</div>
+          <div class="bo-meta">{meta}</div>
+        </div>
+        <div class="bo-metric bo-funding">{funding}</div>
+        <div class="bo-metric bo-signal">{signal}</div>
+      </div>''')
+    rows_html = "\n".join(rows)
+    return f'''\
+  <!-- ════════════════════════════════════════════════════════════════
+       CHART 5: Top AI breakouts from 4YFN26
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <h1 class="title">Breakout AI startups from 4YFN26</h1>
+    <div class="subtitle">4YFN 2026 AI exhibitors with a Dealroom Signal ≥ 80, founded 2015+, and €13M–€90M raised — sorted by Signal</div>
+
+    <div class="bo-list">
+      <div class="bo-head">
+        <div></div>
+        <div>Company</div>
+        <div class="bo-metric-label">Total raised</div>
+        <div class="bo-metric-label">Signal</div>
+      </div>
+{rows_html}
+    </div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        {footer_svgs}
+      </div>
+    </div>
+  </div>'''
+
+# CSS to append (inside <style>) for the breakouts list.
+BREAKOUTS_CSS = """
+    /* ── AI breakouts list ─────────────────────────────── */
+    .bo-list {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+    }
+    .bo-head, .bo-row {
+      display: grid;
+      grid-template-columns: 32px 1fr 100px 70px;
+      gap: 16px;
+      align-items: center;
+    }
+    .bo-head {
+      padding: 0 0 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    .bo-metric-label { text-align: right; }
+    .bo-row {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .bo-row:last-child { border-bottom: none; }
+    .bo-rank {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .bo-info { min-width: 0; }
+    .bo-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .bo-tagline {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .bo-meta {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+    .bo-metric {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    .bo-funding { font-size: 15px; color: var(--text); }
+    .bo-signal { font-size: 15px; color: var(--uv); }
+
+    /* Leaderboard footnote about Health exclusion */
+    .lb-note {
+      margin-top: 12px;
+      font-size: 11px;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+"""
+
+# ---- Existing helpers ----
+def build_leaderboard_data(top_investors):
+    lines = []
+    for row in top_investors:
+        name = row["name"].replace("'", "\\'")
+        lines.append(f"      {{ name: '{name}', count: {int(row['count'])} }},")
+    return "\n".join(lines)
+
+# ---- Extract Dealroom + 4YFN partner logo SVGs from the template so we can
+# reuse them inside injected cards.
+DEALROOM_SVG_MATCH = re.search(
+    r'<svg xmlns="http://www\.w3\.org/2000/svg" viewBox="0 0 222\.15 53\.28" width="110" height="26">.*?</svg>',
+    template, re.DOTALL,
+)
+YFN_SVG_MATCH = re.search(
+    r'<svg class="partner-logo"[^>]*aria-label="4YFN"[^>]*>.*?</svg>',
+    template, re.DOTALL,
+)
+DEALROOM_SVG = DEALROOM_SVG_MATCH.group(0)
+YFN_SVG = YFN_SVG_MATCH.group(0)
+FOOTER_LOGOS_HTML = f'{YFN_SVG}\n        <span class="logo-divider"></span>\n        {DEALROOM_SVG}'
+
+TROPHY_SVG = '<svg class="award-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14v3a4 4 0 0 1-4 4h-.05A4 4 0 0 1 13 13.86V17h3v3H8v-3h3v-3.14A4 4 0 0 1 9.05 10H9a4 4 0 0 1-4-4V3zm2 2v1a2 2 0 0 0 2 2h.18A4 4 0 0 1 9 7V5H7zm10 0v2a4 4 0 0 1-.18 1.16H17a2 2 0 0 0 2-2V5h-2z"/></svg>'
+
+def delete_spotlight_html(html):
+    """Delete just the spotlight card HTML (chart 5). Keeps the .spot-* CSS in
+    place so subsequently-injected spotlight cards still render."""
     pattern = re.compile(
         r"\n\n  <!--\s*═+\s*\n"
         r" +CHART 5:[^\n]*\n"
@@ -50,43 +266,35 @@ def delete_spotlight(html):
     new_html, n = pattern.subn("", html)
     if n != 1:
         raise RuntimeError(f"expected exactly 1 spotlight-card match, got {n}")
-
-    # Also strip the dead .spot-* CSS block that only serves the spotlight card.
-    # It starts at the "Biorce spotlight" comment banner and runs through its
-    # own trailing @media block; the next section starts with a top-level comment.
-    css_pattern = re.compile(
-        r"\n\n    /\* ── Biorce spotlight[^\n]*\*/\n.*?\n    \}(?=\n  </style>)",
-        re.DOTALL,
-    )
-    new_html, css_n = css_pattern.subn("", new_html)
-    if css_n != 1:
-        raise RuntimeError(f"expected exactly 1 spotlight-CSS match, got {css_n}")
     return new_html
 
-def build_leaderboard_data(top_investors):
-    """Return JS-object-array text for the leaderboard `investors` const."""
-    lines = []
-    for row in top_investors:
-        name = row["name"].replace("'", "\\'")
-        lines.append(f"      {{ name: '{name}', count: {int(row['count'])} }},")
-    return "\n".join(lines)
+def inject_card(html, card_html):
+    """Insert a card immediately before the closing </div> of the .outer container."""
+    marker = "\n\n</div>\n\n<script>"
+    if marker not in html:
+        raise RuntimeError("could not find outer/script boundary")
+    return html.replace(marker, f"\n\n{card_html}\n\n</div>\n\n<script>", 1)
+
+def inject_css(html, css):
+    """Append CSS just before </style>."""
+    return html.replace("\n  </style>", f"{css}\n  </style>", 1)
 
 def build(slug, config):
-    label = config["label"]                  # 'Spinouts', 'AI'
-    label_lc = config["label_lc"]            # 'spinouts', 'AI'
-    industry_word = config["industry_word"]  # 'spinout', 'AI'
+    label = config["label"]
+    label_lc = config["label_lc"]
+    industry_word = config["industry_word"]
+    sector_adj = config["sector_adj"]
     cap = data["capsules"][config["data_key"]]
     annual = [r["amount"] for r in cap["annual_vc"]]
     annual_ai = [r["amount"] for r in cap["annual_ai_amount"]]
     stats = cap["stats"]
-    lb = cap["leaderboard"]
+    lb_ex_health = cap["leaderboard_ex_health"]
+    stats_ex_health = cap["stats_ex_health"]
 
-    # Compute the 2026 projected total (same math as the Health capsule) so we
-    # can put a real number in the chart 1 headline.
+    # 2026 projection
     ytd = annual[-1]
     projected = ytd * (365 / day_of_year)
 
-    # Build 2020-vs-2026 share % for the chart 2 headline
     ai_share = cap["ai_share"]
     def pct_at(year):
         for r in ai_share:
@@ -94,8 +302,7 @@ def build(slug, config):
         return None
     start_pct = pct_at(2010)
     latest_pct = pct_at(2026)
-    sector_adj = config["sector_adj"]
-    # For the AI capsule the story is AI's share of *all VC*; label copy differs
+
     if config["data_key"] == "ai":
         share_headline = f"AI has grown from {start_pct}% to {latest_pct}% of all global VC in 2026"
         share_subtitle = "AI-tagged companies' share of global venture capital funding"
@@ -105,7 +312,6 @@ def build(slug, config):
         share_subtitle = f"AI-enabled {industry_word} companies' share of global {industry_word} venture capital funding"
         share_legend = f"AI share of {sector_adj} VC"
 
-    # Chart 1 headline: e.g. "Global AI VC set to hit $780B in 2026"
     proj_str = fmt_amount_short_usd(projected)
     if config["data_key"] == "ai":
         chart1_headline = f"Global AI VC set to hit {proj_str} in 2026"
@@ -113,39 +319,53 @@ def build(slug, config):
         chart1_headline = f"Global {sector_adj} VC on track to {proj_str} in 2026"
     chart1_subtitle = f"Annual venture capital invested in {industry_word} companies worldwide, with 2026 figures annualised from year-to-date"
 
-    # Chart 3 (bubbles) — pick the 5 headline numbers
+    # Chart 3 bubbles (still use full cohort — not Health-excluded)
     b1 = stats["exhibitors"]
     b2 = stats["cross_count"]
     b3 = stats["rounds"]
     b4 = fmt_amount_short_usd(stats["total_raised_usd"])
     b5 = fmt_amount_short_usd(stats["combined_value_usd"])
     b2_label = stats["cross_label"]
+    if config["data_key"] == "spinout":
+        b2_label = "Spin-offs × AI"
 
-    # Chart 4 headline: e.g. "EIT Health tops the leaderboard, involved in 42 of 356
-    # rounds raised by 4YFN 2026 Spinout startups"
-    top_name = lb[0]["name"]; top_count = lb[0]["count"]
-    chart4_headline = f"{top_name} tops the leaderboard, involved in {top_count} of {stats['rounds']} rounds raised by 4YFN 2026 {sector_adj} startups"
-    chart4_subtitle = f"Most active investors in 4YFN 2026 {sector_adj} startups, ranked by number of rounds"
+    # Chart 4 uses Health-excluded data
+    top_name = lb_ex_health[0]["name"]
+    top_count = lb_ex_health[0]["count"]
+    ex_rounds = stats_ex_health["rounds"]
+    ex_cohort = stats_ex_health["exhibitors"]
+    chart4_headline = (
+        f"{top_name} tops the leaderboard, involved in {top_count} of {ex_rounds} "
+        f"rounds raised by the 4YFN 2026 {sector_adj} cohort*"
+    )
+    if config["data_key"] == "ai":
+        chart4_subtitle = (
+            f"Most active investors across 4YFN 2026 AI startups, "
+            f"excluding the AI × Healthtech overlap"
+        )
+        chart4_footnote = f"*Excludes 4YFN 2026 AI × Healthtech companies. {ex_cohort} companies included."
+    else:
+        chart4_subtitle = (
+            f"Most active investors across 4YFN 2026 {sector_adj} startups, "
+            f"excluding Healthtech spin-offs"
+        )
+        chart4_footnote = f"*Excludes 4YFN 2026 Healthtech {industry_word}s. {ex_cohort} companies included."
 
-    # ---- Do the substitutions ----
+    # ---- Substitutions ----
     html = template
 
-    # 1. Delete the spotlight card
-    html = delete_spotlight(html)
+    # 1. Delete spotlight HTML
+    html = delete_spotlight_html(html)
 
-    # 2. <title>
+    # 2. Titles
     html = html.replace(
         "<title>4YFN Health Capsule — Dealroom</title>",
         f"<title>4YFN26 {label} Capsule — Dealroom</title>",
     )
-
-    # 3. capsule-title on page
     html = html.replace(
         '<h1 class="capsule-title">4YFN26 Healthtech data capsule</h1>',
         f'<h1 class="capsule-title">4YFN26 {label} data capsule</h1>',
     )
-
-    # 4. PDF cover title + sub
     html = html.replace(
         '<h1 class="pdf-cover-title">4YFN26 Healthtech<br/>data capsule</h1>',
         f'<h1 class="pdf-cover-title">4YFN26 {label}<br/>data capsule</h1>',
@@ -155,7 +375,7 @@ def build(slug, config):
         f"Global {industry_word} VC trends, 4YFN26 {label} cohort highlights, and the most active investors backing them.",
     )
 
-    # 5. Chart 1
+    # 3. Chart 1
     html = html.replace(
         "CHART 1: Global Health VC with 2026 projection",
         f"CHART 1: Global {label} VC with 2026 projection",
@@ -169,7 +389,7 @@ def build(slug, config):
         chart1_subtitle,
     )
 
-    # 6. Chart 2 (AI share)
+    # 4. Chart 2 (AI share)
     html = html.replace(
         "CHART 2: AI share of Health VC over time",
         "CHART 2: AI share over time",
@@ -187,7 +407,7 @@ def build(slug, config):
         f"<span>{share_legend}</span>",
     )
 
-    # 7. Chart 3 (bubbles)
+    # 5. Chart 3 (bubbles)
     html = html.replace(
         '<h1 class="title">4YFN26 Health at a glance</h1>',
         f'<h1 class="title">4YFN26 {label} at a glance</h1>',
@@ -196,10 +416,11 @@ def build(slug, config):
         "Exhibitor and funding snapshot of the 4YFN26 Healthtech cohort",
         f"Exhibitor and funding snapshot of the 4YFN26 {label} cohort",
     )
-    # bubble stats: b1..b5 numbers and their labels
+    # Bubble 1 label: for AI capsule use "Core AI"; for Spin-off use "Spin-off"
+    b1_label = "Core AI" if config["data_key"] == "ai" else label_lc
     html = re.sub(
         r'<div class="bubble b1">\s*<div class="big-num">156</div>\s*<div class="label">Health<br/>exhibitors</div>',
-        f'<div class="bubble b1">\n          <div class="big-num">{b1}</div>\n          <div class="label">{label_lc}<br/>exhibitors</div>',
+        f'<div class="bubble b1">\n          <div class="big-num">{b1}</div>\n          <div class="label">{b1_label}<br/>exhibitors</div>',
         html,
     )
     html = re.sub(
@@ -223,24 +444,29 @@ def build(slug, config):
         html,
     )
 
-    # 8. Chart 4 (leaderboard)
+    # 6. Chart 4 (leaderboard) — use ex-Health data + add footnote
     html = html.replace(
-        '<h1 class="title">EIT Health is the runaway leader, backing 43 of 206 4YFN Health rounds</h1>',
+        '<h1 class="title">EIT Health tops the leaderboard, involved in 43 of 206 rounds raised by 4YFN 2026 Health startups</h1>',
         f'<h1 class="title">{chart4_headline}</h1>',
     )
     html = html.replace(
-        "Most active investors in 4YFN Health portfolio companies, ranked by rounds participated in",
+        "Most active investors in 4YFN 2026 Health startups, ranked by number of rounds",
         chart4_subtitle,
     )
-    # Substitute the investors const in JS
-    investors_new = build_leaderboard_data(lb)
+    # Add the footnote right after the leaderboard div
+    html = html.replace(
+        '<div class="lb-list" id="leaderboard"></div>',
+        f'<div class="lb-list" id="leaderboard"></div>\n\n    <div class="lb-note">{chart4_footnote}</div>',
+    )
+    # Substitute the investors const with ex-Health leaderboard
+    investors_new = build_leaderboard_data(lb_ex_health)
     html = re.sub(
         r"const investors = \[\n(?:      \{[^}]+\},\n)+\s*\];",
         f"const investors = [\n{investors_new}\n    ];",
         html,
     )
 
-    # 9. JS data arrays: HEALTH_VC and AI_HEALTH become <SLUG>_VC and AI_<SLUG>
+    # 7. JS data arrays
     html = html.replace(
         f"const HEALTH_VC = [11569686153, 13005228269, 12251705491, 14460912830, 20562477994, 30374775283, 28917339747, 39386435786, 55711238555, 57646262236, 83231803629, 133100822224, 91858322902, 64341077110, 70034613609, 70775350767, 31704692820];",
         f"const HEALTH_VC = {js_array(annual)};",
@@ -250,32 +476,101 @@ def build(slug, config):
         f"const AI_HEALTH = {js_array(annual_ai)};",
     )
 
-    # 10. Update the ANNUAL_FACTOR comment + value to reflect the actual day of year
+    # 8. ANNUAL_FACTOR
     html = re.sub(
         r"// 2026 annualisation factor \(today is [^)]+\)\s*\n\s*const ANNUAL_FACTOR = 365 / \d+;",
         f"// 2026 annualisation factor (today is day {day_of_year} of the year)\n  const ANNUAL_FACTOR = 365 / {day_of_year};",
         html,
     )
 
-    # 11. Replace the client-side AI_SHARE derivation with a hardcoded array (using
-    #     the correctly-computed share values from the API). This is critical for
-    #     the AI capsule, where AI_HEALTH == HEALTH_VC would otherwise produce a
-    #     flat 100% line.
+    # 9. AI_SHARE array override (from API-computed values)
     share_arr = "[" + ",".join(f"{r['share']:.6f}" for r in cap["ai_share"]) + "]"
     html = html.replace(
         "const AI_SHARE = HEALTH_VC.map((h, i) => AI_HEALTH[i] / h);",
         f"const AI_SHARE = {share_arr};",
     )
 
+    # 10. Add breakouts/lb-note CSS
+    html = inject_css(html, BREAKOUTS_CSS)
+
+    # 11. Inject the tail card (spotlight for Spin-off, breakouts list for AI)
+    if config["data_key"] == "spinout":
+        html = inject_card(html, spinoff_spotlight_html())
+    elif config["data_key"] == "ai":
+        html = inject_card(html, ai_breakouts_html())
+
     return html
+
+# ---- Floodwaive spotlight (Spin-off capsule) ----
+FLOODWAIVE_LOGO_B64_PATH = pathlib.Path("/tmp/floodwaive-128.b64")
+
+def spinoff_spotlight_html():
+    fw = data["floodwaive"]
+    logo_data = pathlib.Path(FLOODWAIVE_LOGO_B64_PATH).read_text().strip()
+    logo_data_uri = f"data:image/png;base64,{logo_data}"
+
+    signal_str = f'{fw["signal"]:.0f}' if fw.get("signal") is not None else "—"
+    growth_pct = fw.get("employee_count_1y_growth")
+    growth_str = f"+{growth_pct:.0f}% YoY headcount growth" if growth_pct else ""
+    hq = ", ".join(x for x in [fw.get("hq_city"), fw.get("hq_country")] if x)
+
+    return spotlight_card_html(
+        title="Spotlight: Floodwaive",
+        subtitle="Winner of the 4YFN26 Spin-off pitch battle — AI-powered flood forecasting from RWTH Aachen",
+        name=fw["name"],
+        tagline=fw["tagline"],
+        meta_line=f'{hq} · Founded {fw["launch_year"]} · <a href="https://{fw["website_domain"]}">{fw["website_domain"]}</a>',
+        logo_data_uri=logo_data_uri,
+        stats=[
+            {
+                "num": fw["employee_count"],
+                "label": "Team size",
+                "sub": growth_str or "Rapid early hiring",
+            },
+            {
+                "num": fw["launch_year"],
+                "num_class": "coral",
+                "label": "Founded",
+                "sub": "Spin-off from RWTH Aachen University",
+            },
+            {
+                "num": signal_str,
+                "num_class": "blue",
+                "label": "Dealroom Signal",
+                "sub": "Momentum score (out of 100)",
+            },
+            {
+                "num": "Winner",
+                "num_class": "with-icon violet",
+                "prefix_svg": TROPHY_SVG,
+                "label": "4YFN Spin-off Pitch Battle · 2026",
+                "sub": "Recognised at 4YFN Awards in Barcelona",
+                "card_class": "award",
+            },
+        ],
+        about=(
+            "Aachen-based deeptech spinning out of RWTH Aachen University to build "
+            "<strong>DeepWaive</strong> — a physics-informed AI foundation model that "
+            "generates high-resolution flood forecasts up to a million times faster than "
+            "traditional hydrodynamic simulations, enabling proactive climate resilience for "
+            "cities, insurers and critical-infrastructure operators."
+        ),
+        footer_svgs=FOOTER_LOGOS_HTML,
+    )
+
+def ai_breakouts_html():
+    return breakouts_card_html(
+        companies=data["ai_breakouts"]["results"],
+        footer_svgs=FOOTER_LOGOS_HTML,
+    )
 
 configs = {
     "spinouts-capsule": {
         "data_key": "spinout",
-        "label": "Spinouts",           # cohort name (plural) — e.g. "4YFN26 Spinouts at a glance"
-        "label_lc": "Spinout",          # bubble label (singular adjective)
-        "industry_word": "spinout",     # noun form — e.g. "spinout companies"
-        "sector_adj": "Spinout",        # adjective form — e.g. "Spinout VC"
+        "label": "Spin-offs",
+        "label_lc": "Spin-off",
+        "industry_word": "spin-off",
+        "sector_adj": "Spin-off",
     },
     "ai-capsule": {
         "data_key": "ai",

@@ -178,13 +178,104 @@ def build_capsule(slug, tag_id, label):
     print("  leaderboard...", file=sys.stderr)
     lb = leaderboard(cohort_round, top_n=10)
 
+    # Health-excluded variant for the investor ranking. When the cohort itself
+    # IS Health-heavy (health-tagged companies dominate 4YFN26 in every sector),
+    # keeping health-focused investors like EIT Health at the top overshadows
+    # everyone else. Compute a parallel leaderboard scoped only to non-Health
+    # rounds so the ranking card can show either.
+    cohort_round_ex_health = (
+        f"and(company.tag_id[in_all]:{TAG['yfn26']}|{tag_id},"
+        f"company.tag_id[nin_any]:{TAG['health']})"
+    )
+    print("  leaderboard (ex-Health)...", file=sys.stderr)
+    lb_ex_health = leaderboard(cohort_round_ex_health, top_n=10)
+    stats_ex_health = {
+        "exhibitors": count_entities(
+            f"and(organization_subtype[eq]:company,"
+            f"tag_id[in_all]:{TAG['yfn26']}|{tag_id},"
+            f"tag_id[nin_any]:{TAG['health']})"
+        ),
+        "rounds": cohort_rounds(cohort_round_ex_health),
+    }
+
     return {
         "annual_vc": annual_vc,
         "ai_share": ai_share,
         "ai_share_label": ai_share_label,
         "annual_ai_amount": annual_ai,
         "stats": stats,
+        "stats_ex_health": stats_ex_health,
         "leaderboard": lb,
+        "leaderboard_ex_health": lb_ex_health,
+    }
+
+def ai_breakouts(limit=15):
+    """Top AI startups from the 4YFN26 cohort with high momentum (signal ≥ 80,
+    total funding in the €13.6M–€90.9M "breakout" band, founded 2015+).
+    Matches the filter the client shared as a screenshot."""
+    print("\n[ai_breakouts] querying...", file=sys.stderr)
+    r = call("/api/data/entities", [
+        ("filter", (
+            f"and(organization_subtype[eq]:company,"
+            f"tag_id[in_all]:{TAG['yfn26']}|{TAG['ai']},"
+            f"launch_date[gte]:2015,"
+            f"signal_rating[gte]:80,"
+            f"total_funding[gte]:13600000,"
+            f"total_funding[lte]:90900000)"
+        )),
+        ("currency", "EUR"),
+        ("sort", "-signal_rating"),
+        ("limit", limit),
+        ("include_total", "true"),
+    ])
+    return {
+        "total": r["page"]["total"],
+        "results": [
+            {
+                "uuid": row["uuid"],
+                "name": row["name"],
+                "tagline": row.get("tagline"),
+                "hq_city": row.get("hq_city"),
+                "hq_country": row.get("hq_country"),
+                "launch_year": row.get("launch_year"),
+                "signal": (row.get("company") or {}).get("signal_rating"),
+                "total_funding_eur": (row.get("company") or {}).get("total_funding"),
+                "growth_stage": next(
+                    (t["name"] for t in row.get("tags") or []
+                     if t.get("type") == "growth_stage"), None),
+            }
+            for row in r["data"]
+        ],
+    }
+
+def floodwaive_profile():
+    """Fetch Floodwaive's full profile for the Spin-off pitch battle spotlight."""
+    print("\n[floodwaive] fetching...", file=sys.stderr)
+    r = call("/api/data/entities", [
+        ("filter", "and(organization_subtype[eq]:company,name[eq]:Floodwaive)"),
+        ("limit", 1),
+    ])
+    if not r.get("data"):
+        return None
+    e = r["data"][0]
+    company = e.get("company") or {}
+    return {
+        "uuid": e["uuid"],
+        "name": e["name"],
+        "tagline": e.get("tagline"),
+        "hq_city": e.get("hq_city"),
+        "hq_country": e.get("hq_country"),
+        "launch_year": e.get("launch_year"),
+        "website_domain": e.get("website_domain"),
+        "employee_count": e.get("employee_count"),
+        "employee_count_1y_growth": e.get("employee_count_1y_growth"),
+        "signal": company.get("signal_rating"),
+        "growth_stage": next(
+            (t["name"] for t in e.get("tags") or []
+             if t.get("type") == "growth_stage"), None),
+        "image": e.get("image"),
+        "founders": [f.get("name") for f in e.get("founders") or [] if f.get("name")],
+        "about": e.get("about"),
     }
 
 OUT = {
@@ -193,6 +284,8 @@ OUT = {
         "ai":      build_capsule("ai", TAG["ai"], "AI"),
         "spinout": build_capsule("spinout", TAG["spinout"], "Spinouts"),
     },
+    "ai_breakouts": ai_breakouts(limit=15),
+    "floodwaive":   floodwaive_profile(),
 }
 
 out_path = OUT_DIR / "capsule_data.json"

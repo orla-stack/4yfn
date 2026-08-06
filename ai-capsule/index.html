@@ -512,6 +512,228 @@
       letter-spacing: 0.08em;
       margin-left: 4px;
     }
+
+    /* ── Biorce spotlight ─────────────────────────────────── */
+    .spot-hero {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(99, 0, 255, 0.04) 0%, rgba(0, 181, 236, 0.06) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .spot-logo {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spot-logo img { width: 100%; height: auto; display: block; }
+    .spot-id { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .spot-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .spot-tagline {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: -0.005em;
+    }
+    .spot-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .spot-meta a {
+      color: var(--uv);
+      text-decoration: none;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 600;
+    }
+
+    .spot-stats {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .spot-stat {
+      padding: 16px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .spot-stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--uv);
+      line-height: 1;
+    }
+    .spot-stat-num.coral { color: var(--coral); }
+    .spot-stat-num.blue { color: var(--blue); }
+    .spot-stat-num.violet { color: var(--deep-violet); }
+    .spot-stat-num.with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .spot-stat-num .award-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .spot-stat.award {
+      background: linear-gradient(135deg, rgba(99, 0, 255, 0.06) 0%, rgba(255, 97, 49, 0.06) 100%);
+      border-color: rgba(99, 0, 255, 0.2);
+    }
+
+    .spot-stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .spot-stat-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .spot-about {
+      margin-top: 18px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      letter-spacing: -0.003em;
+    }
+    .spot-about strong { color: var(--text); font-weight: 700; }
+
+    .spot-backers {
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .spot-backers-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-right: 8px;
+    }
+    .spot-backers-list {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    @media (max-width: 700px) {
+      .spot-hero { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .spot-stats { grid-template-columns: repeat(2, 1fr); }
+      .spot-name { font-size: 22px; }
+    }
+    /* ── AI breakouts list ─────────────────────────────── */
+    .bo-list {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+    }
+    .bo-head, .bo-row {
+      display: grid;
+      grid-template-columns: 32px 1fr 100px 70px;
+      gap: 16px;
+      align-items: center;
+    }
+    .bo-head {
+      padding: 0 0 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    .bo-metric-label { text-align: right; }
+    .bo-row {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .bo-row:last-child { border-bottom: none; }
+    .bo-rank {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .bo-info { min-width: 0; }
+    .bo-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .bo-tagline {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .bo-meta {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+    .bo-metric {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    .bo-funding { font-size: 15px; color: var(--text); }
+    .bo-signal { font-size: 15px; color: var(--uv); }
+
+    /* Leaderboard footnote about Health exclusion */
+    .lb-note {
+      margin-top: 12px;
+      font-size: 11px;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
   </style>
 </head>
 <body>
@@ -570,7 +792,7 @@
     <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </button>
-    <h1 class="title">Global AI VC set to hit $783.0B in 2026</h1>
+    <h1 class="title">Global AI VC set to hit $745.5B in 2026</h1>
     <div class="subtitle">Annual venture capital invested in AI companies worldwide, with 2026 figures annualised from year-to-date</div>
 
     <div class="legend">
@@ -599,7 +821,7 @@
     <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </button>
-    <h1 class="title">AI has grown from 3% to 74% of all global VC in 2026</h1>
+    <h1 class="title">AI has grown from 3% to 72% of all global VC in 2026</h1>
     <div class="subtitle">AI-tagged companies' share of global venture capital funding</div>
 
     <div class="legend">
@@ -634,14 +856,14 @@
       <div class="bubble-inner">
         <div class="bubble b1">
           <div class="big-num">184</div>
-          <div class="label">AI<br/>exhibitors</div>
+          <div class="label">Core AI<br/>exhibitors</div>
         </div>
         <div class="bubble b2">
           <div class="big-num">39</div>
           <div class="label">AI × Health</div>
         </div>
         <div class="bubble b3">
-          <div class="big-num">394</div>
+          <div class="big-num">398</div>
           <div class="label">Funding<br/>rounds</div>
         </div>
         <div class="bubble b4">
@@ -672,10 +894,12 @@
     <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </button>
-    <h1 class="title">EIT Health tops the leaderboard, involved in 22 of 394 rounds raised by 4YFN 2026 AI startups</h1>
-    <div class="subtitle">Most active investors in 4YFN 2026 AI startups, ranked by number of rounds</div>
+    <h1 class="title">European Innovation Council tops the leaderboard, involved in 6 of 286 rounds raised by the 4YFN 2026 AI cohort*</h1>
+    <div class="subtitle">Most active investors across 4YFN 2026 AI startups, excluding the AI × Healthtech overlap</div>
 
     <div class="lb-list" id="leaderboard"></div>
+
+    <div class="lb-note">*Excludes 4YFN 2026 AI × Healthtech companies. 145 companies included.</div>
 
     <div class="footer">
       <span class="source">Source: Dealroom.co</span>
@@ -683,6 +907,125 @@
         <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
         <span class="logo-divider"></span>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="110" height="26"><defs><style>.cls-1{fill:#001234;}.cls-2{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M211.51,37.69a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,207.45,34a7.75,7.75,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.31,7.31,0,0,1,2.44,1.46A6.82,6.82,0,0,1,221.55,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5A8.69,8.69,0,0,1,211.51,37.69Zm.48-9.2A3.53,3.53,0,0,0,211.1,31a3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0A3.56,3.56,0,0,0,217.9,31a3.54,3.54,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-13.49,9.2a7.31,7.31,0,0,1-2.44-1.46A6.89,6.89,0,0,1,194.44,34a7.63,7.63,0,0,1,0-5.93,6.79,6.79,0,0,1,1.62-2.27,7.15,7.15,0,0,1,2.44-1.46,8.6,8.6,0,0,1,3-.5,8.89,8.89,0,0,1,2.56.4,5.37,5.37,0,0,1,2.33,1.43l-2.8,2.94a2.25,2.25,0,0,0-.87-.75,2.47,2.47,0,0,0-1.22-.29,3.22,3.22,0,0,0-2.5,1,3.52,3.52,0,0,0-.89,2.5A3.53,3.53,0,0,0,199,33.5a3.22,3.22,0,0,0,2.5,1,2.26,2.26,0,0,0,1.22-.3,3.63,3.63,0,0,0,.87-.74l2.8,2.94A5.35,5.35,0,0,1,204,37.78a8.26,8.26,0,0,1-2.56.41A8.6,8.6,0,0,1,198.5,37.69Zm-48.73,0a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,145.71,34a7.63,7.63,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.15,7.15,0,0,1,2.44,1.46A6.82,6.82,0,0,1,159.81,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5,8.69,8.69,0,0,1-3-.5Zm.48-9.2a3.53,3.53,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-17.2,9.2a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,129,34,7.75,7.75,0,0,1,129,28a6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,9.16,9.16,0,0,1,6,0,7.31,7.31,0,0,1,2.44,1.46A7,7,0,0,1,143.09,28a7.75,7.75,0,0,1,0,5.93,7.07,7.07,0,0,1-1.63,2.27A7.31,7.31,0,0,1,139,37.69a9.16,9.16,0,0,1-6,0Zm.48-9.2a3.48,3.48,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0ZM99.32,37.92a4.41,4.41,0,0,1-1.57-.8,3.83,3.83,0,0,1-1.08-1.32,4.15,4.15,0,0,1-.4-1.84,4.21,4.21,0,0,1,.44-2,3.87,3.87,0,0,1,1.19-1.35,6,6,0,0,1,1.71-.84,13.6,13.6,0,0,1,2-.44,20.62,20.62,0,0,1,2.07-.17l1.91,0a2.23,2.23,0,0,0-.81-1.79,2.91,2.91,0,0,0-1.91-.67,4.35,4.35,0,0,0-1.91.44,5.29,5.29,0,0,0-1.54,1.2L97.15,26a7.65,7.65,0,0,1,2.77-1.65,9.87,9.87,0,0,1,3.28-.56,8.68,8.68,0,0,1,3.07.47,4.47,4.47,0,0,1,1.92,1.37,5.21,5.21,0,0,1,1,2.22,14.61,14.61,0,0,1,.29,3v7h-3.9V36.14h-.06a4,4,0,0,1-1.88,1.58,6.37,6.37,0,0,1-2.48.48,6.09,6.09,0,0,1-1.84-.28Zm4-6a6.43,6.43,0,0,0-1.38.24,3,3,0,0,0-1.13.6,1.35,1.35,0,0,0-.47,1.1A1.21,1.21,0,0,0,101,35a2.69,2.69,0,0,0,1.36.36,4.1,4.1,0,0,0,1.2-.17,3.45,3.45,0,0,0,1-.48,2.23,2.23,0,0,0,1-1.92v-.9h-1c-.31,0-.71,0-1.2,0ZM85.47,37.69A7,7,0,0,1,83,36.23,6.78,6.78,0,0,1,81.41,34a7.75,7.75,0,0,1,0-5.93A6.78,6.78,0,0,1,83,25.76a7,7,0,0,1,2.43-1.45,8.46,8.46,0,0,1,3-.51,6.66,6.66,0,0,1,2.68.51,5.56,5.56,0,0,1,2,1.45A6.63,6.63,0,0,1,94.45,28a9.08,9.08,0,0,1,.46,3v1.32H85.06a3.32,3.32,0,0,0,1.1,1.94,3.12,3.12,0,0,0,2.09.71A3.05,3.05,0,0,0,90,34.51a4.8,4.8,0,0,0,1.26-1.2l3,2.17a6.7,6.7,0,0,1-2.57,2,7.71,7.71,0,0,1-3.23.71,8.58,8.58,0,0,1-3-.5Zm1.34-10.62a3,3,0,0,0-.91.58,2.42,2.42,0,0,0-.6.82,2.66,2.66,0,0,0-.24,1h5.6A2.45,2.45,0,0,0,90,27.61a2.51,2.51,0,0,0-1.9-.77,3.24,3.24,0,0,0-1.23.23ZM67.44,37.67A6.07,6.07,0,0,1,65.3,36.2,6.63,6.63,0,0,1,63.93,34a8.17,8.17,0,0,1-.48-2.85,8.9,8.9,0,0,1,.44-2.76A7.32,7.32,0,0,1,65.13,26a6.19,6.19,0,0,1,2-1.63,5.58,5.58,0,0,1,2.63-.6,7.49,7.49,0,0,1,2.48.4,4,4,0,0,1,1.88,1.41h0v-9.1h4.24V37.86h-3.9V36.05h0a4.66,4.66,0,0,1-.66.74,5.56,5.56,0,0,1-1,.7,6.46,6.46,0,0,1-1.21.51,5,5,0,0,1-1.38.2,7.11,7.11,0,0,1-2.77-.53Zm1.14-9.19A3.56,3.56,0,0,0,67.69,31a3.53,3.53,0,0,0,.89,2.51,3.74,3.74,0,0,0,5,0A3.53,3.53,0,0,0,74.47,31a3.56,3.56,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm119.51,9.35a2.56,2.56,0,0,1-.83-.55,2.41,2.41,0,0,1-.55-.83,2.58,2.58,0,0,1-.2-1,2.54,2.54,0,0,1,.2-1A2.5,2.5,0,0,1,188.09,33a2.76,2.76,0,0,1,1-.2,2.73,2.73,0,0,1,1,.2,2.6,2.6,0,0,1,.84.55,2.62,2.62,0,0,1,.75,1.85,2.76,2.76,0,0,1-.2,1,2.73,2.73,0,0,1-.55.83,2.6,2.6,0,0,1-.84.55,2.73,2.73,0,0,1-1,.2,2.67,2.67,0,0,1-1-.2Zm-8.38,0v-8a3.32,3.32,0,0,0-.41-1.66,1.56,1.56,0,0,0-1.46-.68,2.75,2.75,0,0,0-1.23.23,2,2,0,0,0-.79.67,2.77,2.77,0,0,0-.43,1,5.28,5.28,0,0,0-.12,1.19v7.26H171V30.6c0-.24,0-.54,0-.9a3.92,3.92,0,0,0-.2-1,2.05,2.05,0,0,0-.55-.82,1.67,1.67,0,0,0-1.12-.33,2.67,2.67,0,0,0-1.33.29,2,2,0,0,0-.78.79,3.4,3.4,0,0,0-.35,1.12,9.36,9.36,0,0,0-.09,1.3v6.83h-4.24V24.14h4.07V26h.06a3.18,3.18,0,0,1,.57-.79,3.71,3.71,0,0,1,.87-.71,5.18,5.18,0,0,1,1.16-.51,4.87,4.87,0,0,1,1.42-.2,5.46,5.46,0,0,1,2.56.59,3.78,3.78,0,0,1,1.68,1.87,4.53,4.53,0,0,1,1.78-1.9,5.42,5.42,0,0,1,2.57-.56,5.34,5.34,0,0,1,2.33.47,3.7,3.7,0,0,1,1.5,1.27,5.37,5.37,0,0,1,.8,1.89,10.65,10.65,0,0,1,.23,2.33v8.1Zm-61.28,0V24.13h4.24v2.2h0a5.21,5.21,0,0,1,1.62-1.9,4.07,4.07,0,0,1,2.35-.64l.73,0a3.87,3.87,0,0,1,.68.12V27.8a6.77,6.77,0,0,0-.89-.21,5.62,5.62,0,0,0-.92-.07,4.55,4.55,0,0,0-1.93.34,2.48,2.48,0,0,0-1.08.95,3.58,3.58,0,0,0-.5,1.45,12.9,12.9,0,0,0-.11,1.86v5.73Zm-6.76,0V16.51h4.24V37.86Z"/><path d="M1.5,0H51.89a1.5,1.5,0,0,1,1.5,1.5V51.77a1.52,1.52,0,0,1-1.51,1.51H1.51A1.51,1.51,0,0,1,0,51.77H0V1.5A1.5,1.5,0,0,1,1.5,0Z"/><path class="cls-2" d="M17,38.2v-17h6.21v17Zm14,0H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23c0,3.85-1.06,6.83-3.19,8.91s-5.11,3.13-9,3.14ZM31,33.07h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72,4.66,4.66,0,0,0-3.82-1.53H31ZM9.15,38.2V27.55h6.21V38.2Z"/></g></g></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       CHART 5: Top AI breakouts from 4YFN26
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <h1 class="title">Breakout AI startups from 4YFN26</h1>
+    <div class="subtitle">4YFN 2026 AI exhibitors with a Dealroom Signal ≥ 80, founded 2015+, and €13M–€90M raised — sorted by Signal</div>
+
+    <div class="bo-list">
+      <div class="bo-head">
+        <div></div>
+        <div>Company</div>
+        <div class="bo-metric-label">Total raised</div>
+        <div class="bo-metric-label">Signal</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">1</div>
+        <div class="bo-info">
+          <div class="bo-name">Biorce</div>
+          <div class="bo-tagline">Revolutionizing drug development through the power of artificial intelligence for clinical trials</div>
+          <div class="bo-meta">Barcelona, Spain · Founded 2024</div>
+        </div>
+        <div class="bo-metric bo-funding">€67M</div>
+        <div class="bo-metric bo-signal">94.8</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">2</div>
+        <div class="bo-info">
+          <div class="bo-name">Virtue AI</div>
+          <div class="bo-tagline">AI-native security and compliance platform for enterprises</div>
+          <div class="bo-meta">San Francisco, United States · Founded 2024</div>
+        </div>
+        <div class="bo-metric bo-funding">€33M</div>
+        <div class="bo-metric bo-signal">92.3</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">3</div>
+        <div class="bo-info">
+          <div class="bo-name">NeuralTrust</div>
+          <div class="bo-tagline">Security platform for generative AI and LLM applications</div>
+          <div class="bo-meta">Barcelona, Spain · Founded 2022</div>
+        </div>
+        <div class="bo-metric bo-funding">€25M</div>
+        <div class="bo-metric bo-signal">91.2</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">4</div>
+        <div class="bo-info">
+          <div class="bo-name">GetVocal AI</div>
+          <div class="bo-tagline">Hybrid human-AI agents for enterprise customer experience</div>
+          <div class="bo-meta">Paris, France · Founded 2023</div>
+        </div>
+        <div class="bo-metric bo-funding">€30M</div>
+        <div class="bo-metric bo-signal">91.1</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">5</div>
+        <div class="bo-info">
+          <div class="bo-name">SynSense</div>
+          <div class="bo-tagline">Neuromorphic processors for ultra-low-power, low-latency edge AI</div>
+          <div class="bo-meta">Zurich, Switzerland · Founded 2017</div>
+        </div>
+        <div class="bo-metric bo-funding">€46M</div>
+        <div class="bo-metric bo-signal">90.2</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">6</div>
+        <div class="bo-info">
+          <div class="bo-name">Enhans</div>
+          <div class="bo-tagline">AI agents automating e-commerce operations and decisions</div>
+          <div class="bo-meta">Seoul, South Korea · Founded 2021</div>
+        </div>
+        <div class="bo-metric bo-funding">€25M</div>
+        <div class="bo-metric bo-signal">90.0</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">7</div>
+        <div class="bo-info">
+          <div class="bo-name">Algorized</div>
+          <div class="bo-tagline">AI-powered software for people-sensing and positioning applications</div>
+          <div class="bo-meta">Etoy, Switzerland · Founded 2022</div>
+        </div>
+        <div class="bo-metric bo-funding">€19M</div>
+        <div class="bo-metric bo-signal">87.9</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">8</div>
+        <div class="bo-info">
+          <div class="bo-name">Qilimanjaro Quantum Tech</div>
+          <div class="bo-tagline">Qilimanjaro builds analog quantum computers and hybrid data centers to fast-track quantum advantage and unlock global access</div>
+          <div class="bo-meta">Barcelona, Spain · Founded 2019</div>
+        </div>
+        <div class="bo-metric bo-funding">€14M</div>
+        <div class="bo-metric bo-signal">86.2</div>
+      </div>
+      <div class="bo-row">
+        <div class="bo-rank">9</div>
+        <div class="bo-info">
+          <div class="bo-name">BRAINR</div>
+          <div class="bo-tagline">AI-powered manufacturing execution system for food industry.</div>
+          <div class="bo-meta">Lisbon, Portugal · Founded 2021</div>
+        </div>
+        <div class="bo-metric bo-funding">€15M</div>
+        <div class="bo-metric bo-signal">84.2</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="source">Source: Dealroom.co</span>
+      <div class="logos">
+        <svg class="partner-logo" xmlns="http://www.w3.org/2000/svg" viewBox="176 213 449 442" aria-label="4YFN" role="img"><path fill="currentColor" d="m208.73,441.95v213.56h45.81v-79h45.26c3.25,0,6.31-1.57,8.21-4.21l29.88-41.65h-83.35v-42.89h108.93c3.25,0,6.31-1.57,8.21-4.21l29.84-41.6h-192.78Z"/><path fill="currentColor" d="m607.97,441.95h-45.81v129.67s-90.08-125.46-90.08-125.46c-1.9-2.64-4.95-4.21-8.2-4.21h-47.67v213.56h45.81v-144.9s100.94,140.69,100.94,140.69c1.9,2.64,4.95,4.21,8.21,4.21h36.82v-213.56Z"/><path fill="currentColor" d="m475.3,423.01l150.19-209.35h-56.38l-58.22,81.16c-1.5,2.09-4.6,2.09-6.1,0l-58.22-81.16h-56.38l89.46,124.7-63.75,88.86h51.19c3.25,0,6.31-1.57,8.21-4.21Z"/><path fill="currentColor" d="m323.56,374.48v52.79h45.81v-52.79h38.26v-41.05h-38.26v-119.78l-75.39-.06c-5.66,0-10.98,2.72-14.27,7.32l-78.86,109.92c-1.31,1.82-1.31,4.28,0,6.1l27.37,37.55h95.34Zm-68.13-41.15l68.13-94.97v94.97s-68.13,0-68.13,0Z"/></svg>
+        <span class="logo-divider"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222.15 53.28" width="110" height="26"><defs><style>.cls-1{fill:#001234;}.cls-2{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path id="Union_2" data-name="Union 2" class="cls-1" d="M211.51,37.69a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,207.45,34a7.75,7.75,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.31,7.31,0,0,1,2.44,1.46A6.82,6.82,0,0,1,221.55,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5A8.69,8.69,0,0,1,211.51,37.69Zm.48-9.2A3.53,3.53,0,0,0,211.1,31a3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0A3.56,3.56,0,0,0,217.9,31a3.54,3.54,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-13.49,9.2a7.31,7.31,0,0,1-2.44-1.46A6.89,6.89,0,0,1,194.44,34a7.63,7.63,0,0,1,0-5.93,6.79,6.79,0,0,1,1.62-2.27,7.15,7.15,0,0,1,2.44-1.46,8.6,8.6,0,0,1,3-.5,8.89,8.89,0,0,1,2.56.4,5.37,5.37,0,0,1,2.33,1.43l-2.8,2.94a2.25,2.25,0,0,0-.87-.75,2.47,2.47,0,0,0-1.22-.29,3.22,3.22,0,0,0-2.5,1,3.52,3.52,0,0,0-.89,2.5A3.53,3.53,0,0,0,199,33.5a3.22,3.22,0,0,0,2.5,1,2.26,2.26,0,0,0,1.22-.3,3.63,3.63,0,0,0,.87-.74l2.8,2.94A5.35,5.35,0,0,1,204,37.78a8.26,8.26,0,0,1-2.56.41A8.6,8.6,0,0,1,198.5,37.69Zm-48.73,0a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,145.71,34a7.63,7.63,0,0,1,0-5.93,6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,8.69,8.69,0,0,1,3-.5,8.6,8.6,0,0,1,3,.5,7.15,7.15,0,0,1,2.44,1.46A6.82,6.82,0,0,1,159.81,28a7.63,7.63,0,0,1,0,5.93,6.92,6.92,0,0,1-1.63,2.27,7.31,7.31,0,0,1-2.44,1.46,8.6,8.6,0,0,1-3,.5,8.69,8.69,0,0,1-3-.5Zm.48-9.2a3.53,3.53,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm-17.2,9.2a7.17,7.17,0,0,1-2.43-1.46A6.78,6.78,0,0,1,129,34,7.75,7.75,0,0,1,129,28a6.68,6.68,0,0,1,1.63-2.27,7.17,7.17,0,0,1,2.43-1.46,9.16,9.16,0,0,1,6,0,7.31,7.31,0,0,1,2.44,1.46A7,7,0,0,1,143.09,28a7.75,7.75,0,0,1,0,5.93,7.07,7.07,0,0,1-1.63,2.27A7.31,7.31,0,0,1,139,37.69a9.16,9.16,0,0,1-6,0Zm.48-9.2a3.48,3.48,0,0,0-.89,2.51,3.56,3.56,0,0,0,.89,2.51,3.76,3.76,0,0,0,5,0,3.56,3.56,0,0,0,.89-2.51,3.53,3.53,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0ZM99.32,37.92a4.41,4.41,0,0,1-1.57-.8,3.83,3.83,0,0,1-1.08-1.32,4.15,4.15,0,0,1-.4-1.84,4.21,4.21,0,0,1,.44-2,3.87,3.87,0,0,1,1.19-1.35,6,6,0,0,1,1.71-.84,13.6,13.6,0,0,1,2-.44,20.62,20.62,0,0,1,2.07-.17l1.91,0a2.23,2.23,0,0,0-.81-1.79,2.91,2.91,0,0,0-1.91-.67,4.35,4.35,0,0,0-1.91.44,5.29,5.29,0,0,0-1.54,1.2L97.15,26a7.65,7.65,0,0,1,2.77-1.65,9.87,9.87,0,0,1,3.28-.56,8.68,8.68,0,0,1,3.07.47,4.47,4.47,0,0,1,1.92,1.37,5.21,5.21,0,0,1,1,2.22,14.61,14.61,0,0,1,.29,3v7h-3.9V36.14h-.06a4,4,0,0,1-1.88,1.58,6.37,6.37,0,0,1-2.48.48,6.09,6.09,0,0,1-1.84-.28Zm4-6a6.43,6.43,0,0,0-1.38.24,3,3,0,0,0-1.13.6,1.35,1.35,0,0,0-.47,1.1A1.21,1.21,0,0,0,101,35a2.69,2.69,0,0,0,1.36.36,4.1,4.1,0,0,0,1.2-.17,3.45,3.45,0,0,0,1-.48,2.23,2.23,0,0,0,1-1.92v-.9h-1c-.31,0-.71,0-1.2,0ZM85.47,37.69A7,7,0,0,1,83,36.23,6.78,6.78,0,0,1,81.41,34a7.75,7.75,0,0,1,0-5.93A6.78,6.78,0,0,1,83,25.76a7,7,0,0,1,2.43-1.45,8.46,8.46,0,0,1,3-.51,6.66,6.66,0,0,1,2.68.51,5.56,5.56,0,0,1,2,1.45A6.63,6.63,0,0,1,94.45,28a9.08,9.08,0,0,1,.46,3v1.32H85.06a3.32,3.32,0,0,0,1.1,1.94,3.12,3.12,0,0,0,2.09.71A3.05,3.05,0,0,0,90,34.51a4.8,4.8,0,0,0,1.26-1.2l3,2.17a6.7,6.7,0,0,1-2.57,2,7.71,7.71,0,0,1-3.23.71,8.58,8.58,0,0,1-3-.5Zm1.34-10.62a3,3,0,0,0-.91.58,2.42,2.42,0,0,0-.6.82,2.66,2.66,0,0,0-.24,1h5.6A2.45,2.45,0,0,0,90,27.61a2.51,2.51,0,0,0-1.9-.77,3.24,3.24,0,0,0-1.23.23ZM67.44,37.67A6.07,6.07,0,0,1,65.3,36.2,6.63,6.63,0,0,1,63.93,34a8.17,8.17,0,0,1-.48-2.85,8.9,8.9,0,0,1,.44-2.76A7.32,7.32,0,0,1,65.13,26a6.19,6.19,0,0,1,2-1.63,5.58,5.58,0,0,1,2.63-.6,7.49,7.49,0,0,1,2.48.4,4,4,0,0,1,1.88,1.41h0v-9.1h4.24V37.86h-3.9V36.05h0a4.66,4.66,0,0,1-.66.74,5.56,5.56,0,0,1-1,.7,6.46,6.46,0,0,1-1.21.51,5,5,0,0,1-1.38.2,7.11,7.11,0,0,1-2.77-.53Zm1.14-9.19A3.56,3.56,0,0,0,67.69,31a3.53,3.53,0,0,0,.89,2.51,3.74,3.74,0,0,0,5,0A3.53,3.53,0,0,0,74.47,31a3.56,3.56,0,0,0-.89-2.51,3.76,3.76,0,0,0-5,0Zm119.51,9.35a2.56,2.56,0,0,1-.83-.55,2.41,2.41,0,0,1-.55-.83,2.58,2.58,0,0,1-.2-1,2.54,2.54,0,0,1,.2-1A2.5,2.5,0,0,1,188.09,33a2.76,2.76,0,0,1,1-.2,2.73,2.73,0,0,1,1,.2,2.6,2.6,0,0,1,.84.55,2.62,2.62,0,0,1,.75,1.85,2.76,2.76,0,0,1-.2,1,2.73,2.73,0,0,1-.55.83,2.6,2.6,0,0,1-.84.55,2.73,2.73,0,0,1-1,.2,2.67,2.67,0,0,1-1-.2Zm-8.38,0v-8a3.32,3.32,0,0,0-.41-1.66,1.56,1.56,0,0,0-1.46-.68,2.75,2.75,0,0,0-1.23.23,2,2,0,0,0-.79.67,2.77,2.77,0,0,0-.43,1,5.28,5.28,0,0,0-.12,1.19v7.26H171V30.6c0-.24,0-.54,0-.9a3.92,3.92,0,0,0-.2-1,2.05,2.05,0,0,0-.55-.82,1.67,1.67,0,0,0-1.12-.33,2.67,2.67,0,0,0-1.33.29,2,2,0,0,0-.78.79,3.4,3.4,0,0,0-.35,1.12,9.36,9.36,0,0,0-.09,1.3v6.83h-4.24V24.14h4.07V26h.06a3.18,3.18,0,0,1,.57-.79,3.71,3.71,0,0,1,.87-.71,5.18,5.18,0,0,1,1.16-.51,4.87,4.87,0,0,1,1.42-.2,5.46,5.46,0,0,1,2.56.59,3.78,3.78,0,0,1,1.68,1.87,4.53,4.53,0,0,1,1.78-1.9,5.42,5.42,0,0,1,2.57-.56,5.34,5.34,0,0,1,2.33.47,3.7,3.7,0,0,1,1.5,1.27,5.37,5.37,0,0,1,.8,1.89,10.65,10.65,0,0,1,.23,2.33v8.1Zm-61.28,0V24.13h4.24v2.2h0a5.21,5.21,0,0,1,1.62-1.9,4.07,4.07,0,0,1,2.35-.64l.73,0a3.87,3.87,0,0,1,.68.12V27.8a6.77,6.77,0,0,0-.89-.21,5.62,5.62,0,0,0-.92-.07,4.55,4.55,0,0,0-1.93.34,2.48,2.48,0,0,0-1.08.95,3.58,3.58,0,0,0-.5,1.45,12.9,12.9,0,0,0-.11,1.86v5.73Zm-6.76,0V16.51h4.24V37.86Z"/><path id="square" class="cls-1" d="M1.5,0H51.89a1.5,1.5,0,0,1,1.5,1.5V51.77a1.52,1.52,0,0,1-1.51,1.51H1.51A1.51,1.51,0,0,1,0,51.77H0V1.5A1.5,1.5,0,0,1,1.5,0Z"/><path id="Union_1" data-name="Union 1" class="cls-2" d="M17,38.2v-17h6.21v17Zm14,0H24.82V15.07h7.87q5.56,0,8.6,2.85t3,8.23c0,3.85-1.06,6.83-3.19,8.91s-5.11,3.13-9,3.14ZM31,33.07h1.3a5.05,5.05,0,0,0,4.17-1.65,8,8,0,0,0,1.33-5.05,7.34,7.34,0,0,0-1.26-4.72,4.66,4.66,0,0,0-3.82-1.53H31ZM9.15,38.2V27.55h6.21V38.2Z"/></g></g></svg>
       </div>
     </div>
   </div>
@@ -717,12 +1060,12 @@
 
   // ── DATA ───────────────────────────────────────────────────────
   const YEARS = ['2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
-  const HEALTH_VC = [1778478453,3976848899,3238102989,5902653169,9893493170,17332167222,17238245306,31375478262,53893688461,50439511432,57922168462,128239787944,81316089516,84751428986,136404852503,223370189490,416177771232];
-  const AI_HEALTH = [1778478453,3976848899,3238102989,5902653169,9893493170,17332167222,17238245306,31375478262,53893688461,50439511432,57922168462,128239787944,81316089516,84751428986,136404852503,223370189490,416177771232];
-  const AI_SHARE = [0.034421,0.058741,0.048612,0.072694,0.073472,0.085636,0.087412,0.128200,0.151605,0.148748,0.145298,0.159384,0.149403,0.224611,0.336422,0.464122,0.744534];
+  const HEALTH_VC = [1778478453,3977848899,3238102989,5901453169,9893493170,17363269722,17238187306,31375349595,53908688985,50453465357,58023600962,128396078931,81292980202,84968868266,136667339463,223838476528,445237273616];
+  const AI_HEALTH = [1778478453,3977848899,3238102989,5901453169,9893493170,17363269722,17238187306,31375349595,53908688985,50453465357,58023600962,128396078931,81292980202,84968868266,136667339463,223838476528,445237273616];
+  const AI_SHARE = [0.034422,0.058758,0.048610,0.072676,0.073466,0.085791,0.087464,0.128212,0.151925,0.149490,0.145548,0.159845,0.149389,0.225193,0.336235,0.462247,0.715251];
 
-  // 2026 annualisation factor (today is day 194 of the year)
-  const ANNUAL_FACTOR = 365 / 194;
+  // 2026 annualisation factor (today is day 218 of the year)
+  const ANNUAL_FACTOR = 365 / 218;
   const HEALTH_VC_2026_PROJ = HEALTH_VC[HEALTH_VC.length - 1] * ANNUAL_FACTOR;
 
   // ── CHART 1: Global Health VC bars + 2026 projection ───────────
@@ -1052,16 +1395,16 @@
   // ── CHART 4: Investor leaderboard ──────────────────────────────
   (function buildLeaderboard() {
     const investors = [
-      { name: 'EIT Health', count: 22 },
-      { name: 'European Innovation Council', count: 10 },
-      { name: 'ENISA', count: 9 },
-      { name: 'Provincial Council of Bizkaia', count: 7 },
-      { name: 'Basque Government', count: 6 },
-      { name: 'Google for Startups Accelerator', count: 6 },
-      { name: 'University of Barcelona', count: 5 },
+      { name: 'European Innovation Council', count: 6 },
+      { name: 'Provincial Council of Bizkaia', count: 6 },
+      { name: 'ENISA', count: 5 },
       { name: 'Naver D2 Startup Factory', count: 4 },
       { name: 'Swanlaab Venture Factory', count: 4 },
       { name: 'Speedinvest', count: 4 },
+      { name: 'Türk Telekom Ventures', count: 4 },
+      { name: 'APY Ventures', count: 4 },
+      { name: 'Basque Government', count: 4 },
+      { name: 'Google for Startups Accelerator', count: 4 },
     ];
     const max = investors[0].count;
     const container = document.getElementById('leaderboard');
