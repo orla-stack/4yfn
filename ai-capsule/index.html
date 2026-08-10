@@ -792,7 +792,7 @@
     <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </button>
-    <h1 class="title">Global AI VC set to hit $745.5B in 2026</h1>
+    <h1 class="title">Global AI VC set to hit $749.1B in 2026</h1>
     <div class="subtitle">Annual venture capital invested in AI companies worldwide, with 2026 figures annualised from year-to-date</div>
 
     <div class="legend">
@@ -894,7 +894,7 @@
     <button class="download-btn" aria-label="Download chart as PNG" title="Download as PNG">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </button>
-    <h1 class="title">European Innovation Council tops the leaderboard, involved in 6 of 286 rounds raised by the 4YFN 2026 AI cohort*</h1>
+    <h1 class="title">European Innovation Council tops the leaderboard, involved in 9 of 286 rounds raised by the 4YFN 2026 AI cohort*</h1>
     <div class="subtitle">Most active investors across 4YFN 2026 AI startups, excluding the AI × Healthtech overlap</div>
 
     <div class="lb-list" id="leaderboard"></div>
@@ -1001,16 +1001,6 @@
       <div class="bo-row">
         <div class="bo-rank">8</div>
         <div class="bo-info">
-          <div class="bo-name">Qilimanjaro Quantum Tech</div>
-          <div class="bo-tagline">Qilimanjaro builds analog quantum computers and hybrid data centers to fast-track quantum advantage and unlock global access</div>
-          <div class="bo-meta">Barcelona, Spain · Founded 2019</div>
-        </div>
-        <div class="bo-metric bo-funding">€14M</div>
-        <div class="bo-metric bo-signal">86.2</div>
-      </div>
-      <div class="bo-row">
-        <div class="bo-rank">9</div>
-        <div class="bo-info">
           <div class="bo-name">BRAINR</div>
           <div class="bo-tagline">AI-powered manufacturing execution system for food industry.</div>
           <div class="bo-meta">Lisbon, Portugal · Founded 2021</div>
@@ -1060,12 +1050,12 @@
 
   // ── DATA ───────────────────────────────────────────────────────
   const YEARS = ['2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
-  const HEALTH_VC = [1778478453,3977848899,3238102989,5901453169,9893493170,17363269722,17238187306,31375349595,53908688985,50453465357,58023600962,128396078931,81292980202,84968868266,136667339463,223838476528,445237273616];
-  const AI_HEALTH = [1778478453,3977848899,3238102989,5901453169,9893493170,17363269722,17238187306,31375349595,53908688985,50453465357,58023600962,128396078931,81292980202,84968868266,136667339463,223838476528,445237273616];
-  const AI_SHARE = [0.034422,0.058758,0.048610,0.072676,0.073466,0.085791,0.087464,0.128212,0.151925,0.149490,0.145548,0.159845,0.149389,0.225193,0.336235,0.462247,0.715251];
+  const HEALTH_VC = [1778478453,3977848899,3238102989,5901453169,9853493170,17343269722,17208047306,31345319595,53748688985,50425965357,57917600962,127664578931,81292965202,84968868266,136718326468,224750984190,455587966981];
+  const AI_HEALTH = [1778478453,3977848899,3238102989,5901453169,9853493170,17343269722,17208047306,31345319595,53748688985,50425965357,57917600962,127664578931,81292965202,84968868266,136718326468,224750984190,455587966981];
+  const AI_SHARE = [0.034422,0.058758,0.048610,0.072676,0.073169,0.085692,0.087200,0.128089,0.151474,0.149408,0.145282,0.158857,0.149389,0.225198,0.336228,0.455741,0.717749];
 
-  // 2026 annualisation factor (today is day 218 of the year)
-  const ANNUAL_FACTOR = 365 / 218;
+  // 2026 annualisation factor (today is day 222 of the year)
+  const ANNUAL_FACTOR = 365 / 222;
   const HEALTH_VC_2026_PROJ = HEALTH_VC[HEALTH_VC.length - 1] * ANNUAL_FACTOR;
 
   // ── CHART 1: Global Health VC bars + 2026 projection ───────────
@@ -1395,14 +1385,14 @@
   // ── CHART 4: Investor leaderboard ──────────────────────────────
   (function buildLeaderboard() {
     const investors = [
-      { name: 'European Innovation Council', count: 6 },
+      { name: 'European Innovation Council', count: 9 },
       { name: 'Provincial Council of Bizkaia', count: 6 },
       { name: 'ENISA', count: 5 },
       { name: 'Naver D2 Startup Factory', count: 4 },
       { name: 'Swanlaab Venture Factory', count: 4 },
       { name: 'Speedinvest', count: 4 },
-      { name: 'Türk Telekom Ventures', count: 4 },
       { name: 'APY Ventures', count: 4 },
+      { name: 'Türk Telekom Ventures', count: 4 },
       { name: 'Basque Government', count: 4 },
       { name: 'Google for Startups Accelerator', count: 4 },
     ];

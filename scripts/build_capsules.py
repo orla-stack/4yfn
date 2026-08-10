@@ -324,10 +324,24 @@ def build(slug, config):
     b2 = stats["cross_count"]
     b3 = stats["rounds"]
     b4 = fmt_amount_short_usd(stats["total_raised_usd"])
-    b5 = fmt_amount_short_usd(stats["combined_value_usd"])
     b2_label = stats["cross_label"]
+    bubbles_footnote = None
     if config["data_key"] == "spinout":
         b2_label = "Spin-offs × AI"
+        # Combined value with Akamai in the mix is misleading — Akamai is a
+        # public NASDAQ company and dominates the sum. Show the ex-Akamai
+        # figure with a footnote flagging the exclusion.
+        if stats.get("combined_value_ex_akamai_usd") and stats.get("akamai_valuation_usd"):
+            b5 = fmt_amount_short_usd(stats["combined_value_ex_akamai_usd"]) + "*"
+            akamai_val_str = fmt_amount_short_usd(stats["akamai_valuation_usd"])
+            bubbles_footnote = (
+                f"*Excludes Akamai, an MIT spin-off with a valuation of "
+                f"~{akamai_val_str}"
+            )
+        else:
+            b5 = fmt_amount_short_usd(stats["combined_value_usd"])
+    else:
+        b5 = fmt_amount_short_usd(stats["combined_value_usd"])
 
     # Chart 4 uses Health-excluded data
     top_name = lb_ex_health[0]["name"]
@@ -444,6 +458,22 @@ def build(slug, config):
         html,
     )
 
+    # If we have an Akamai-exclusion footnote, insert it after the bubble-stage
+    # container inside the same card.
+    if bubbles_footnote:
+        html = html.replace(
+            '<div class="bubble-inner">',
+            '<div class="bubble-inner">',  # anchor no-op
+        )
+        # Anchor on the closing </div> of the .bubble-stage. There is only one
+        # bubble-stage in the file, so a plain replace on the exact stage-close
+        # sequence is unique.
+        html = html.replace(
+            '</div>\n    </div>\n\n    <div class="footer">',
+            f'</div>\n    </div>\n\n    <div class="lb-note">{bubbles_footnote}</div>\n\n    <div class="footer">',
+            1,
+        )
+
     # 6. Chart 4 (leaderboard) — use ex-Health data + add footnote
     html = html.replace(
         '<h1 class="title">EIT Health tops the leaderboard, involved in 43 of 206 rounds raised by 4YFN 2026 Health startups</h1>',
@@ -544,7 +574,7 @@ def spinoff_spotlight_html():
                 "num_class": "with-icon violet",
                 "prefix_svg": TROPHY_SVG,
                 "label": "4YFN Spin-off Pitch Battle · 2026",
-                "sub": "Recognised at 4YFN Awards in Barcelona",
+                "sub": "Recognised at 4YFN26 Barcelona",
                 "card_class": "award",
             },
         ],
@@ -559,8 +589,12 @@ def spinoff_spotlight_html():
     )
 
 def ai_breakouts_html():
+    # Client asked to drop Qilimanjaro from the breakouts — while their quantum
+    # stack accelerates AI use cases, it isn't itself an AI company.
+    excluded_names = {"Qilimanjaro Quantum Tech"}
+    companies = [c for c in data["ai_breakouts"]["results"] if c["name"] not in excluded_names]
     return breakouts_card_html(
-        companies=data["ai_breakouts"]["results"],
+        companies=companies,
         footer_svgs=FOOTER_LOGOS_HTML,
     )
 

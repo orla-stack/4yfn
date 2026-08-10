@@ -102,8 +102,16 @@ def cohort_rounds(filt):
         ("filter", filt), ("limit", 1), ("include_total", "true"),
     ])["page"]["total"]
 
+# Normalise investor names that refer to the same real-world entity but appear
+# separately in Dealroom. Extend as more overlaps are found.
+INVESTOR_ALIASES = {
+    "EIC Fund": "European Innovation Council",   # EIC's equity arm (Luxembourg SICAV)
+}
+
 def leaderboard(round_filter, top_n=10, page_limit=500):
-    """Page through all rounds matching filter, tally investor participation."""
+    """Page through all rounds matching filter, tally investor participation.
+    Applies INVESTOR_ALIASES so grant + equity arms of the same body collapse
+    into a single row (e.g. EIC Fund → European Innovation Council)."""
     tally = Counter()
     offset = 0
     total_rounds = 0
@@ -119,7 +127,8 @@ def leaderboard(round_filter, top_n=10, page_limit=500):
         for tx in rows:
             for inv in tx.get("investors") or []:
                 if inv.get("name"):
-                    tally[inv["name"]] += 1
+                    canonical = INVESTOR_ALIASES.get(inv["name"], inv["name"])
+                    tally[canonical] += 1
         total_rounds += len(rows)
         if len(rows) < page_limit:
             break
@@ -174,6 +183,29 @@ def build_capsule(slug, tag_id, label):
         "total_raised_usd": cohort_total_raised(cohort_round),
         "combined_value_usd": cohort_combined_valuation(cohort_company),
     }
+    # For the Spin-off capsule the combined value is dominated by Akamai (a
+    # public NASDAQ company tagged as an MIT spin-off). Also compute an
+    # ex-Akamai version so the bubble can tell the early-stage story honestly.
+    # We can't `neq` on name in the aggregate, so grab Akamai's own latest
+    # valuation and subtract.
+    if tag_id == TAG["spinout"]:
+        try:
+            r = call("/api/data/companies/d31acd7d-36de-4892-9e0f-3e3b2ff4b2af/valuations",
+                     [("currency", "USD"), ("limit", 5)])
+            latest_akamai_val = next(
+                (row["value"] for row in r.get("data", [])
+                 if row.get("month") and not row.get("is_estimate")),
+                None,
+            )
+        except Exception as e:
+            print(f"  akamai valuation lookup failed: {e}", file=sys.stderr)
+            latest_akamai_val = None
+        if latest_akamai_val and stats["combined_value_usd"]:
+            stats["combined_value_ex_akamai_usd"] = stats["combined_value_usd"] - latest_akamai_val
+            stats["akamai_valuation_usd"] = latest_akamai_val
+        else:
+            stats["combined_value_ex_akamai_usd"] = None
+            stats["akamai_valuation_usd"] = None
 
     print("  leaderboard...", file=sys.stderr)
     lb = leaderboard(cohort_round, top_n=10)
